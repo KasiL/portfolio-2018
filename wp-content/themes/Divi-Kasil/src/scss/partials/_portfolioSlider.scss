@@ -1,0 +1,10 @@
+#picture span{
+    position: relative;
+    max-height: 70vh;
+    overflow: hidden !important;
+
+    img {
+        // position: absolute;
+        cursor: grab;
+    }
+}

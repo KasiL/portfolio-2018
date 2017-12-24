@@ -1,0 +1,23 @@
+/*# 
+	Theme Name: Kasil Child Theme
+	Description:  A DIVI child theme 
+	  Author:       Casey Lisak
+	  Author URI:   http://www.caseylisak.com
+  	Template:     Divi
+  	Version:      1.0.0 
+*/
+
+body.kasil{
+	@import 'partials/vars';
+	// @import 'partials/mixins/mixins';
+	// @import 'partials/base';
+	@import 'partials/header';
+	// @import 'partials/modules';
+	// @import 'partials/footer';
+	// @import 'partials/comments';
+	// @import 'partials/widgets';
+	// @import 'partials/wp-defaults';
+	@import 'partials/portfolioSlider';
+	@import 'partials/timeline';
+	// @import 'partials/utilities';
+}

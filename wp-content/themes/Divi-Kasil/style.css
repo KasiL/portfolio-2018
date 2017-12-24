@@ -1,0 +1,64 @@
+/*# 
+	Theme Name: Kasil Child Theme
+	Description:  A DIVI child theme 
+	  Author:       Casey Lisak
+	  Author URI:   http://www.caseylisak.com
+  	Template:     Divi
+  	Version:      1.0.0 
+*/
+body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li:hover:before {
+	opacity: 1;
+}
+
+body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-page-ancestor a, body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-menu-item a, body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current_page_item a {
+	opacity: 1;
+	color: red;
+}
+
+@media all and (min-width: 1100px) {
+	body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.menu-item-has-children a:first-child {
+		padding-right: 0;
+	}
+	body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.menu-item-has-children a::after {
+		content: '';
+		display: none;
+	}
+	body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.menu-item-has-children .sub-menu {
+		display: none;
+	}
+}
+
+body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li a {
+	opacity: 1;
+}
+
+@media (min-width: 981px) {
+	body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li a {
+		padding: 0 26px 26px;
+	}
+}
+
+body.kasil #main-header #logo {
+	-webkit-transform: inherit;
+	    -ms-transform: inherit;
+	        transform: inherit;
+}
+
+body.kasil #picture span {
+	position: relative;
+	max-height: 70vh;
+	overflow: hidden !important;
+}
+
+body.kasil #picture span img {
+	cursor: -webkit-grab;
+	cursor: grab;
+}
+
+body.kasil .leftToRightDivider {
+	height: calc(100% - 30px);
+}
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3R5bGUuY3NzIiwic291cmNlcyI6WyJzdHlsZS5zY3NzIiwicGFydGlhbHMvX3ZhcnMuc2NzcyIsInBhcnRpYWxzL19oZWFkZXIuc2NzcyIsInBhcnRpYWxzL19wb3J0Zm9saW9TbGlkZXIuc2NzcyIsInBhcnRpYWxzL190aW1lbGluZS5zY3NzIl0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7OztFQU9FO0FBRUYsQUVMZ0IsSUZLWixBQUFBLE1BQU0sQ0VUVixZQUFZLENBQ1Isa0JBQWtCLENBQ2QsR0FBRyxBQUFBLGFBQWEsQ0FDWixFQUFFLEFBQUEsSUFBSSxDQUNGLEVBQUUsQUFFRyxNQUFNLEFBQ0YsT0FBTyxDQUFDO0NBQ0wsT0FBTyxFQUFFLENBQUU7Q0FDZDs7QUZBekIsQUVLd0IsSUZMcEIsQUFBQSxNQUFNLENFVFYsWUFBWSxDQUNSLGtCQUFrQixDQUNkLEdBQUcsQUFBQSxhQUFhLENBQ1osRUFBRSxBQUFBLElBQUksQ0FDRixFQUFFLEFBT0csc0JBQXNCLENBR25CLENBQUMsRUZMekIsQUVLd0IsSUZMcEIsQUFBQSxNQUFNLENFVFYsWUFBWSxDQUNSLGtCQUFrQixDQUNkLEdBQUcsQUFBQSxhQUFhLENBQ1osRUFBRSxBQUFBLElBQUksQ0FDRixFQUFFLEFBUUcsa0JBQWtCLENBRWYsQ0FBQyxFRkx6QixBRUt3QixJRkxwQixBQUFBLE1BQU0sQ0VUVixZQUFZLENBQ1Isa0JBQWtCLENBQ2QsR0FBRyxBQUFBLGFBQWEsQ0FDWixFQUFFLEFBQUEsSUFBSSxDQUNGLEVBQUUsQUFTRyxrQkFBa0IsQ0FDZixDQUFDLENBQUM7Q0FDRSxPQUFPLEVBQUUsQ0FBRTtDQUNYLEtBQUssRUFBRSxHQUFJO0NBQ2Q7O0FBR0QsTUFBTSxDQUFOLEdBQUcsTUFBTSxTQUFTLEVBQUUsTUFBTTtDRlhsRCxBRVk0QixJRlp4QixBQUFBLE1BQU0sQ0VUVixZQUFZLENBQ1Isa0JBQWtCLENBQ2QsR0FBRyxBQUFBLGFBQWEsQ0FDWixFQUFFLEFBQUEsSUFBSSxDQUNGLEVBQUUsQUFlRyx1QkFBdUIsQ0FFaEIsQ0FBQyxBQUNJLFlBQVksQ0FBQztFQUNWLGFBQWEsRUFBRSxDQUFFO0VBQ3BCO0NGZmpDLEFFWTRCLElGWnhCLEFBQUEsTUFBTSxDRVRWLFlBQVksQ0FDUixrQkFBa0IsQ0FDZCxHQUFHLEFBQUEsYUFBYSxDQUNaLEVBQUUsQUFBQSxJQUFJLENBQ0YsRUFBRSxBQWVHLHVCQUF1QixDQUVoQixDQUFDLEFBSUksT0FBTyxDQUFDO0VBQ0wsT0FBTyxFQUFFLEVBQUc7RUFDWixPQUFPLEVBQUUsSUFBSztFQUNqQjtDRm5CakMsQUVxQjRCLElGckJ4QixBQUFBLE1BQU0sQ0VUVixZQUFZLENBQ1Isa0JBQWtCLENBQ2QsR0FBRyxBQUFBLGFBQWEsQ0FDWixFQUFFLEFBQUEsSUFBSSxDQUNGLEVBQUUsQUFlRyx1QkFBdUIsQ0FXaEIsU0FBUyxDQUFDO0VBQ04sT0FBTyxFQUFFLElBQUs7RUFDakI7OztBRnZCN0IsQUUwQm9CLElGMUJoQixBQUFBLE1BQU0sQ0VUVixZQUFZLENBQ1Isa0JBQWtCLENBQ2QsR0FBRyxBQUFBLGFBQWEsQ0FDWixFQUFFLEFBQUEsSUFBSSxDQUNGLEVBQUUsQ0ErQkUsQ0FBQyxDQUFDO0NBSUUsT0FBTyxFQUFFLENBQUU7Q0FDZDs7QUFKRyxNQUFNLEVBQUwsU0FBUyxFQUFFLEtBQUs7Q0YzQnpDLEFFMEJvQixJRjFCaEIsQUFBQSxNQUFNLENFVFYsWUFBWSxDQUNSLGtCQUFrQixDQUNkLEdBQUcsQUFBQSxhQUFhLENBQ1osRUFBRSxBQUFBLElBQUksQ0FDRixFQUFFLENBK0JFLENBQUMsQ0FBQztFQUVNLE9BQU8sRUFBRSxXQUFZO0VBRzVCOzs7QUYvQnJCLEFFMENJLElGMUNBLEFBQUEsTUFBTSxDRVRWLFlBQVksQ0FtRFIsS0FBSyxDQUFDO0NBQ0YsU0FBUyxFQUFFLE9BQVE7Q0FDdEI7O0FGNUNMLEFHVFMsSUhTTCxBQUFBLE1BQU0sQ0dUVixRQUFRLENBQUMsSUFBSSxDQUFBO0NBQ1QsUUFBUSxFQUFFLFFBQVM7Q0FDbkIsVUFBVSxFQUFFLElBQUs7Q0FDakIsUUFBUSxFQUFFLGlCQUFrQjtDQU0vQjs7QUhBRCxBR0pJLElISUEsQUFBQSxNQUFNLENHVFYsUUFBUSxDQUFDLElBQUksQ0FLVCxHQUFHLENBQUM7Q0FFQSxNQUFNLEVBQUUsSUFBSztDQUNoQjs7QUhDTCxBSU5BLElKTUksQUFBQSxNQUFNLENJTlYsbUJBQW1CLENBQUM7Q0FDaEIsTUFBTSxFQUFFLGlCQUFJO0NBQ2YiLCJuYW1lcyI6W119 */
+
+/*# sourceMappingURL=style.css.map */
