@@ -32,7 +32,7 @@ function kasil_custom_scripts () {
         get_stylesheet_directory_uri() . '/src/js/custom.js', 
         array(
             'jquery',
-
+            'jquery-ui-draggable'
         ),
         false,
         true

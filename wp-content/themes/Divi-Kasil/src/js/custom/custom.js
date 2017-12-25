@@ -1,18 +1,30 @@
 (function ($) {
-    // Document Ready
-    // $(document).ready(function () {
-        alert('hey Im working');
+    //window loaded
+    $(window).load(function () {
+        
+        var picHolder = $('#picture-container');
+        // pic container height
         var h = $('#picture-container').height();
+        //image size
         var picH = $('#picture-container img').height();
-        var scrollHeight = (picH - h) * -1;
+        var picW = $('#picture-container img').width();
+        // get the offset height
+        var scrollHeight = (h - picH);
+        //get the top left coords for the container
+        var position = picHolder.offset();
+        var containerTop = position.top;
+        var containerLeft = position.left;
+
+        var heightCalc = containerTop - picH + h;
+
         console.log('h: ' + h);
         console.log('picH: ' + picH);
         console.log("scrollH: " + scrollHeight);
+        console.log('left: ' + position.left + ' top: ' + position.top);
 
-        $("img").draggable(
-            {
-                containment: [0, scrollHeight, 0, 0]
-            }
-        );
-    // );
+        $("#picture-container img").draggable({ 
+            axis : "y",
+            containment: [containerLeft, heightCalc, picW, containerTop] 
+        });
+    });
 })(jQuery);
