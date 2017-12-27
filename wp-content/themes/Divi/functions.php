@@ -9012,7 +9012,3 @@ function et_divi_filter_et_core_is_builder_used_on_current_request( $is_builder_
 }
 add_filter( 'et_core_is_builder_used_on_current_request', 'et_divi_filter_et_core_is_builder_used_on_current_request' );
 endif;
-
-@ini_set( 'upload_max_size' , '64M' );
-@ini_set( 'post_max_size', '64M');
-@ini_set( 'max_execution_time', '300' );
