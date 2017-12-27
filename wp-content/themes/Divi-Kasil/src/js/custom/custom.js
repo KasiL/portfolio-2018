@@ -2,7 +2,7 @@
     //window loaded
     $(window).load(function () {
         //check if class exists
-        if ($('#picture - container').length > 0) { 
+        if ($('#picture-container').length > 0) { 
             var picHolder = $('#picture-container');
             // pic container height
             var h = $('#picture-container').height();
@@ -15,7 +15,8 @@
             var position = picHolder.offset();
             var containerTop = position.top;
             var containerLeft = position.left;
-
+            
+            
             var heightCalc = containerTop - picH + h;
 
             console.log('h: ' + h);

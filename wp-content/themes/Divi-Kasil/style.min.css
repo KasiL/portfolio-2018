@@ -1,5 +1,5 @@
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li:hover:before{opacity:1}
-body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-page-ancestor a,body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-menu-item a,body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current_page_item a{opacity:1;color:red}
+body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-page-ancestor a,body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-menu-item a,body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current_page_item a{opacity:1}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li a{opacity:1}
 body.kasil #main-header #logo{-webkit-transform:inherit;-ms-transform:inherit;transform:inherit}
 body.kasil #id{background-size:initial;background-position:top right}
