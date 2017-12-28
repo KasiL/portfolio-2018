@@ -1,0 +1,14 @@
+.et_pb_portfolio_items {
+    
+    .et_pb_portfolio_image {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        
+        img {
+            height: auto;
+            width: 100%;
+            min-height: auto;
+        }
+    }
+}

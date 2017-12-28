@@ -3,6 +3,8 @@ body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-pa
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li a{opacity:1}
 body.kasil #main-header #logo{-webkit-transform:inherit;-ms-transform:inherit;transform:inherit}
 body.kasil #id{background-size:initial;background-position:top right}
+body.kasil .et_pb_portfolio_items .et_pb_portfolio_image{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center}
+body.kasil .et_pb_portfolio_items .et_pb_portfolio_image img{height:auto;width:100%;min-height:auto}
 body.kasil #picture-container{position:relative;max-height:70vh;overflow:hidden !important;height:100%;width:100%;display:block}
 body.kasil #picture-container img{position:relative;top:0;left:0;cursor:-webkit-grab;cursor:grab;-o-object-fit:cover;object-fit:cover}
 body.kasil .leftToRightDivider{height:calc(100% - 30px)}
