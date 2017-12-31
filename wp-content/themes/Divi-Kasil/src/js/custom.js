@@ -1,6 +1,8 @@
 (function ($) {
     //window loaded
     $(window).load(function () {
+        //this function scrolls an image on  portfolio page
+        //need to add #picture-container for this to work
         //check if class exists
         if ($('#picture-container').length > 0) { 
             var picHolder = $('#picture-container');
@@ -28,6 +30,19 @@
                 axis : "y",
                 containment: [containerLeft, heightCalc, picW, containerTop] 
             });
+        };
+        //plays background video on hover
+        //put bgVideo class on container
+        //1. check to see if class exists on page
+        if ($('.bgVideo').length > 0) { 
+            $(".bgVideo video").mouseover(function () {
+                // this.css("background-color","red");
+                this.play();
+            });
+            $(".bgVideo video").mouseout(function () {
+                this.pause();
+            }
+            );
         };
     });
 })(jQuery);
