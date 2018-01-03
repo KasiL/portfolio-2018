@@ -12,3 +12,65 @@
         }
     }
 }
+.projectNav {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    
+    @media(min-width: $screen-xs-min) {
+        flex-direction: row;
+    }
+
+    a {
+        display: inline-block;
+        
+        &:hover {
+            transition-duration: .5s;
+            
+            img {
+                transform: translateX(0);
+            }
+        }
+    }
+    .nav-previous,
+    .nav-next {
+        padding: 15px;
+        float: none;
+        
+        span {
+            z-index: 2;
+        }
+        img {
+            
+            transition: ease-in-out;
+            transition-duration: .3s;
+            z-index: 1;
+        }
+        a {
+            display: flex;
+            align-items: center;
+        }
+    }
+    .nav-previous img {
+        transform: translateX(-200%);
+        padding-left: 10px;
+    }
+    .nav-next img {
+        transform: translateX(200%);
+        padding-right: 10px;
+    }
+    .portfolio-return {
+        flex-grow: 2;
+        text-align: center;
+        
+        @media(max-width: $screen-xs-min) {
+            width: 100%;
+            
+            a {
+                @media(max-width: $screen-xs-min) {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

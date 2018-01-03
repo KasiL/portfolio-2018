@@ -35,11 +35,13 @@
         //put bgVideo class on container
         //1. check to see if class exists on page
         if ($('.bgVideo').length > 0) { 
-            $(".bgVideo video").mouseover(function () {
+            $('video').removeAttr("autoplay");
+
+            $(" video").mouseover(function () {
                 // this.css("background-color","red");
                 this.play();
             });
-            $(".bgVideo video").mouseout(function () {
+            $(" video").mouseout(function () {
                 this.pause();
             }
             );
