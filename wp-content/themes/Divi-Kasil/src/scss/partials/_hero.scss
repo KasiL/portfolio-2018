@@ -1,4 +1,63 @@
-#id {
-    background-size: initial;
+#hero {
+    background-size: contain;
     background-position: top right;
+    // background-image: linear-gradient(180deg, #92b5bf 0%, #00a588 100%), url(src/assets/img/kaz.svg) !important;
+    // background-blend-mode: multiply;
+    // background-repeat: no-repeat;
+    #svgAnimator {
+        float: right;
+        svg {
+            height: 50vh;
+            width: 50vh;
+            @media(min-width:$screen-tab-min) {
+                height: 45vh;
+                width: 30vw;
+            }
+            @media(min-width:$screen-md-min) {
+                height: 55vh;
+                width: 35vw;
+            }
+            @media(min-width:$screen-lg-min) {
+                height: 60vh;
+                width: 30vw;
+            }
+        }
+    }
+    .Animate-Draw {
+        fill-opacity: 0;
+        animation-timing-function: ease-in-out;
+        animation-fill-mode: forwards;
+        animation-name: DrawLine, FadeStroke, FillIn;
+        animation-duration: 4s, 1s, 1s;
+        animation-delay: 0s, 3.5s, 3.5s;
+    }
+
+    #Draw-Mark {
+        stroke-dashArray: 67607.8828125;
+        stroke-dashoffset: 67607.8828125;
+        fill: rgba(#000,.5);
+        stroke: #000;
+        stroke-width: 10px !important;
+        stroke-miterlimit: 5;
+    }
+    @keyframes DrawLine {
+        to {
+            stroke-dashOffset: 0;
+        }
+    }
+
+    @keyframes FadeStroke {
+        to {
+            stroke-opacity: 0;
+        }
+    }
+
+    @keyframes FillIn {
+        from {
+            fill-opacity: 0;
+        }
+        to {
+            fill-opacity: 1;
+        }
+    }
 }
