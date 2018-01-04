@@ -2,11 +2,14 @@
     display: flex;
     align-items: center;
     top: 0 !important;
+    padding-top: 0 !important;
+
     #et-top-navigation {
+        text-align: left;
+        
         nav#top-menu-nav {
             ul.nav {
                 li {
-
                     &:hover {
                         &:before {
                             opacity: 1;
@@ -37,9 +40,6 @@
                         }
                     }
                     a {
-                        @media(min-width: $screen-tab-min) {
-                            padding: 0 26px 26px;
-                        }
                         opacity: 1;
                     }
                 }
