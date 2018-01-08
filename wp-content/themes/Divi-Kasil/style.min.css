@@ -1,13 +1,14 @@
 body.kasil hr{width:5vw;height:4px;background:-webkit-linear-gradient(top,#92b5bf 0,#00a588 100%);background:linear-gradient(180deg,#92b5bf 0,#00a588 100%);border:0;margin:0 0 20px 0}
 body.kasil .vCenter{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;height:100%}
 body.kasil #main-content .container::before{display:none}
+body.kasil *{outline:1px solid red}
 body.kasil #main-header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;top:0 !important;padding-top:0 !important}
 body.kasil #main-header #et-top-navigation{text-align:left}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li:hover:before{opacity:1}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-page-ancestor a,body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-menu-item a,body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current_page_item a{opacity:1}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li a{opacity:1}
 body.kasil #main-header #logo{-webkit-transform:inherit;-ms-transform:inherit;transform:inherit}
-body.kasil #hero{background-size:contain;background-position:top right}
+body.kasil #hero{outline:1px solid red;background-size:contain;background-position:top right}
 body.kasil #hero .heroFlex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}
 body.kasil #hero .heroFlex #heroMessage{-webkit-align-self:flex-end;-ms-flex-item-align:end;align-self:flex-end}
 body.kasil #hero .heroFlex #svgAnimator svg{height:250px;width:230px}
