@@ -1,7 +1,6 @@
 body.kasil hr{width:5vw;height:4px;background:-webkit-linear-gradient(top,#92b5bf 0,#00a588 100%);background:linear-gradient(180deg,#92b5bf 0,#00a588 100%);border:0;margin:0 0 20px 0}
 body.kasil .vCenter{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;height:100%}
 body.kasil #main-content .container::before{display:none}
-body.kasil *{outline:1px solid red}
 body.kasil #main-header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;top:0 !important;padding-top:0 !important}
 body.kasil #main-header #et-top-navigation{text-align:left}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li:hover:before{opacity:1}
