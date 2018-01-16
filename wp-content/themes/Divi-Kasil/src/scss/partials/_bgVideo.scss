@@ -1,0 +1,35 @@
+//bg video on homepage
+.bgVideoLink {
+    
+    position: relative;
+    z-index: 1;
+    transform: perspective(1px) translateZ(0);
+    display: block;
+
+    &::before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba( #f6f6f6, .5);
+        transform: scale(1);
+        transition-property: transform;
+        transition-duration: 0.3s;
+        transition-timing-function: ease-in-out;
+    }
+
+    &:hover {
+        &::before{
+            transform: scale(0.85, .2);
+            background: rgba( #f6f6f6, 1);
+        }
+        h3 a {
+            transition-duration: 0.3s;
+            // background: #f6f6f6;
+            color: #00a588;
+        }
+    }
+}
