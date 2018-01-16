@@ -1,7 +1,17 @@
 //updates the buttons on the gallery
 .et_pb_gallery {
-    .et-pb-slider-arrows {
-        background: #fff;
+    .et-pb-slider-arrows a{
+        background: #fff !important;
         border-radius: 50%;
+        color: #00a588 !important;
+    }
+    .et-pb-controllers a {
+        border: 1px solid;
+        width: 10px;
+        height: 10px;
+        
+        &.et-pb-active-control {
+            background-color: #00a588 !important;
+        }
     }
 }

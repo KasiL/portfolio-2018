@@ -1,3 +1,11 @@
+.greyed {
+    filter: saturate(0);
+    transition-duration: 0.3s;
+    
+    &:hover {
+        filter: saturate(1);
+    }
+}
 //bg video on homepage
 .bgVideoLink {
     
@@ -5,6 +13,7 @@
     z-index: 1;
     transform: perspective(1px) translateZ(0);
     display: block;
+    transition-timing-function: ease-in-out;
 
     &::before {
         content: "";
@@ -14,9 +23,10 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba( #f6f6f6, .5);
+        background: rgba( #f6f6f6, 1);
+        opacity: 0.5;
         transform: scale(1);
-        transition-property: transform;
+        transition-property: opacity, transform;
         transition-duration: 0.3s;
         transition-timing-function: ease-in-out;
     }
@@ -24,7 +34,10 @@
     &:hover {
         &::before{
             transform: scale(0.85, .2);
-            background: rgba( #f6f6f6, 1);
+            transition-duration: 0.3s;
+            background: #f6f6f6;
+            opacity: 1;
+            transition-timing-function: ease-in-out;
         }
         h3 a {
             transition-duration: 0.3s;

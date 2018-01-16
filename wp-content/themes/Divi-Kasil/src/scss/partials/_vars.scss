@@ -23,6 +23,9 @@ hr {
     align-items: center;
     height: 100%;
 }
+.hCenter {
+    justify-content: center;
+}
 
 #main-content .container::before {
     display: none;

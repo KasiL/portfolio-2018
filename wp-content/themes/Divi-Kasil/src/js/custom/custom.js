@@ -35,29 +35,32 @@
         //put bgVideo class on container
         //1. check to see if class exists on page
         if ($('.bgVideo').length > 0) { 
-            $('.bgVideo video').attr("autoplay", false);
+            // 2. pause video on page load
+            // $('video').attr("autoplay", false);
 
-            //hover on text
-            // $("et_pb_text_inner").mouseover(function () {
-            //     $("video").play();
-            // });
-            // $("et_pb_text_inner").mouseout(function () {
-            //     $("video").pause();
-            // });
-            //original
-            //  $("video").mouseover(function () {
+            // play on hover & pause on mouseout
+            // $("video").mouseover(function () {
             //      this.play();
             //  });
             // $(" video").mouseout(function () {
             //     this.pause();
             // });
-        };
 
-        // //adds a a link wrapper around fouracross
-        $('.bgVideo').each(function () {
-            var url = $(this).find('a').attr('href');
-            $(this).wrap('<a href="' + url + '" class="bgVideoLink"></a>');
-        });
+            //apply video effect to each video
+            // $('.bgVideoLink').each(function () {
+            //     $(this).mouseover(function () {
+            //         this.video.pause();
+            //     });
+            // });
+
+            // //adds a a link wrapper around fouracross
+            $('.bgVideo').each(function () {
+                var url = $(this).find('a').attr('href');
+                $(this).wrap('<a href="' + url + '" class="bgVideoLink"></a>');
+                
+            });
+                    
+        };
 
 
         // if ($('#hero').length > 0) {

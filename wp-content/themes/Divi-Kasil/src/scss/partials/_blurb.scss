@@ -1,0 +1,14 @@
+// aligns text for blurbs
+.blurb-spacer {
+    p {
+        display: flex;
+        flex-direction: column;
+
+        @media(min-width: $screen-sm-min) {
+            flex-direction: row;
+        }
+        strong {
+            margin-right: 10px;
+        }
+    }
+}
