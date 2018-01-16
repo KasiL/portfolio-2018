@@ -46,3 +46,10 @@ hr {
         }
     }
 }
+
+h4 {
+    @media (max-width:$screen-xs-min) {
+        font-size: 24px;
+        
+    }
+}

@@ -33,16 +33,20 @@
 
     &:hover {
         &::before{
-            transform: scale(0.85, .2);
+            transform: scale(0);
             transition-duration: 0.3s;
             background: #f6f6f6;
             opacity: 1;
             transition-timing-function: ease-in-out;
         }
         h3 a {
-            transition-duration: 0.3s;
-            // background: #f6f6f6;
+            background: #f6f6f6;
             color: #00a588;
         }
+    }
+    h3 a {
+        transition-duration: 0.2s;
+        transition-timing-function: ease-out;
+        display: inline-block;
     }
 }

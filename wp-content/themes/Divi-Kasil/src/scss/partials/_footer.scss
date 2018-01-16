@@ -1,0 +1,19 @@
+footer {
+    background-image: url('src/assets/img/cube-footer.png');
+    background-size: cover;
+
+    #footerLinks {
+        display: flex;
+        a {
+            display: inline-block;
+            font-size: 28px;
+            color: #007269;
+            transition: .3s;
+            padding: 0 5px;
+            
+            &:hover {
+                color: #00a588;
+            }
+        }
+    }
+}
