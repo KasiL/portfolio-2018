@@ -39,6 +39,11 @@
             // false, 
             // TRUE
         );
+        //adds svg morpheus
+        wp_enqueue_script (
+            'svgMorpheus', 
+            '//cdnjs.cloudflare.com/ajax/libs/SVG-Morpheus/0.3.2/svg-morpheus.js'
+        );
     }
     add_action ('wp_enqueue_scripts', 'kasil_custom_scripts');
     // wp_enqueue_script( 'orbit-et-builder-modules-global-functions-script', get_stylesheet_directory_uri() . '/includes/builder/scripts/frontend-builder-global-functions.js', ['jquery'], '1.0', TRUE );

@@ -19,9 +19,9 @@ body.kasil footer{background-image:url("src/assets/img/cube-footer.png");backgro
 body.kasil footer #footerLinks{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex}
 body.kasil footer #footerLinks a{display:inline-block;font-size:28px;color:#007269;-webkit-transition:.3s;transition:.3s;padding:0 5px}
 body.kasil footer #footerLinks a:hover{color:#00a588}
-body.kasil .et_pb_gallery .et-pb-slider-arrows a{background:#fff !important;border-radius:50%;color:#00a588 !important}
-body.kasil .et_pb_gallery .et-pb-controllers a{border:1px solid;width:10px;height:10px}
-body.kasil .et_pb_gallery .et-pb-controllers a.et-pb-active-control{background-color:#00a588 !important}
+body.kasil .et_pb_gallery .et-pb-slider-arrows a,body.kasil .et_pb_slider .et-pb-slider-arrows a{background:#fff !important;border-radius:50%;color:#00a588 !important}
+body.kasil .et_pb_gallery .et-pb-controllers a,body.kasil .et_pb_slider .et-pb-controllers a{border:1px solid;width:10px;height:10px}
+body.kasil .et_pb_gallery .et-pb-controllers a.et-pb-active-control,body.kasil .et_pb_slider .et-pb-controllers a.et-pb-active-control{background-color:#00a588 !important}
 body.kasil #main-header{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;top:0 !important;padding-top:0 !important}
 body.kasil #main-header #et-top-navigation{text-align:left}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li:hover:before{opacity:1}
@@ -50,7 +50,7 @@ body.kasil .projectNav .portfolio-return{-webkit-box-flex:2;-webkit-flex-grow:2;
 body.kasil #scroll-container{position:relative;padding-top:25px;border:2px solid #dcdcdc;border-radius:7px 7px 0 0;margin-bottom:50px}
 body.kasil #scroll-container:before{content:'';width:100%;height:25px;position:absolute;top:0;border-radius:5px 5px 0 0;background-color:#e8e8e8;background-position:0 0;background-image:-webkit-radial-gradient(15px circle,#e95d55 5px,transparent 5px),-webkit-radial-gradient(30px circle,#f5bc36 5px,transparent 5px),-webkit-radial-gradient(45px circle,#69c942 5px,transparent 5px);background-image:radial-gradient(circle at 15px,#e95d55 5px,transparent 5px),radial-gradient(circle at 30px,#f5bc36 5px,transparent 5px),radial-gradient(circle at 45px,#69c942 5px,transparent 5px)}
 body.kasil #picture-container{position:relative;max-height:70vh;overflow:hidden !important;height:100%;width:100%;display:block}
-body.kasil #picture-container img{position:relative;top:0;left:0;cursor:-webkit-grab;cursor:grab;-o-object-fit:cover;object-fit:cover}
+body.kasil #picture-container img{position:relative;top:0;left:0;cursor:url("src/assets/img/picture-container-scroll.png"),auto;-o-object-fit:cover;object-fit:cover}
 body.kasil .leftToRightDivider{height:calc(100% - 30px)}
 @media(min-width:480px){body.kasil .projectNav{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row}
 }@media(min-width:768px){body.kasil .blurb-spacer p{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row}
