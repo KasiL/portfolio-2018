@@ -2,15 +2,15 @@ body.kasil hr{width:5vw;height:4px;background:-webkit-linear-gradient(top,#92b5b
 body.kasil .vCenter{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;height:100%}
 body.kasil .hCenter{-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center}
 body.kasil #main-content .container::before{display:none}
-body.kasil .blurb-spacer p{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}
-body.kasil .blurb-spacer p strong{margin-right:10px}
 body.kasil .greyed{-webkit-filter:saturate(0);filter:saturate(0);-webkit-transition-duration:.3s;transition-duration:.3s}
 body.kasil .greyed:hover{-webkit-filter:saturate(1);filter:saturate(1)}
+body.kasil .blurb-spacer p{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}
+body.kasil .blurb-spacer p strong{margin-right:10px}
 body.kasil .bgVideoLink{position:relative;z-index:1;-webkit-transform:perspective(1px) translateZ(0);transform:perspective(1px) translateZ(0);display:block;-webkit-transition-timing-function:ease-in-out;transition-timing-function:ease-in-out}
 body.kasil .bgVideoLink::before{content:"";position:absolute;z-index:-1;top:0;left:0;right:0;bottom:0;background:#f6f6f6;opacity:.5;-webkit-transform:scale(1);-ms-transform:scale(1);transform:scale(1);-webkit-transition-property:opacity,-webkit-transform;transition-property:opacity,-webkit-transform;transition-property:opacity,transform;transition-property:opacity,transform,-webkit-transform;-webkit-transition-duration:.3s;transition-duration:.3s;-webkit-transition-timing-function:ease-in-out;transition-timing-function:ease-in-out}
 body.kasil .bgVideoLink:hover::before{-webkit-transform:scale(0);-ms-transform:scale(0);transform:scale(0);-webkit-transition-duration:.3s;transition-duration:.3s;background:#f6f6f6;opacity:1;-webkit-transition-timing-function:ease-in-out;transition-timing-function:ease-in-out}
 body.kasil .bgVideoLink:hover h3 a{background:#f6f6f6;color:#00a588}
-body.kasil .bgVideoLink h3 a{-webkit-transition-duration:.2s;transition-duration:.2s;-webkit-transition-timing-function:ease-out;transition-timing-function:ease-out}
+body.kasil .bgVideoLink h3 a{-webkit-transition-duration:.2s;transition-duration:.2s;-webkit-transition-timing-function:ease-out;transition-timing-function:ease-out;display:inline-block}
 body.kasil .et_pb_button{display:inline-block}
 body.kasil .et_pb_contact_right{color:#fff}
 body.kasil .et_pb_contact_right input{background:rgba(0,0,0,0.2);border:0;padding:5px}
@@ -31,7 +31,7 @@ body.kasil #main-header #logo{-webkit-transform:inherit;-ms-transform:inherit;tr
 body.kasil #hero{background-size:contain;background-position:top right}
 body.kasil #hero .heroFlex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}
 body.kasil #hero .heroFlex #heroMessage{-webkit-align-self:flex-end;-ms-flex-item-align:end;align-self:flex-end}
-body.kasil #hero .heroFlex #svgAnimator svg{height:250px;width:230px}
+body.kasil #hero .heroFlex #svgAnimator svg{height:250px;width:100%}
 body.kasil #hero .Animate-Draw{fill-opacity:0;-webkit-animation-timing-function:ease-in-out;animation-timing-function:ease-in-out;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards;-webkit-animation-name:DrawLine,FadeStroke,FillIn;animation-name:DrawLine,FadeStroke,FillIn;-webkit-animation-duration:4s,1s,1s;animation-duration:4s,1s,1s;-webkit-animation-delay:0s,3.5s,2s;animation-delay:0s,3.5s,2s}
 body.kasil #hero #Draw-Mark{stroke-dashArray:67607.8828125;stroke-dashoffset:67607.8828125;fill:rgba(0,0,0,0.5);stroke:#000;stroke-width:10px !important;stroke-miterlimit:5}
 body.kasil .et_pb_portfolio_items .et_pb_portfolio_image{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center}
@@ -54,19 +54,21 @@ body.kasil #picture-container img{position:relative;top:0;left:0;cursor:-webkit-
 body.kasil .leftToRightDivider{height:calc(100% - 30px)}
 @media(min-width:480px){body.kasil .projectNav{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row}
 }@media(min-width:768px){body.kasil .blurb-spacer p{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row}
+body.kasil #hero .heroFlex{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row}
 body.kasil #hero .heroFlex #heroMessage{-webkit-box-ordinal-group:1;-webkit-order:0;-ms-flex-order:0;order:0}
+body.kasil #hero .heroFlex #heroMessage p{font-size:24px}
 body.kasil #hero .heroFlex #svgAnimator{-webkit-box-ordinal-group:2;-webkit-order:1;-ms-flex-order:1;order:1}
-}@media(min-width:981px){body.kasil #hero .heroFlex{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row}
-body.kasil #hero .heroFlex #svgAnimator svg{height:45vh;width:30vw}
+}@media(min-width:981px){body.kasil #hero .heroFlex #svgAnimator svg{height:45vh}
 }@media all and (min-width:1100px){body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.menu-item-has-children a:first-child{padding-right:0}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.menu-item-has-children a::after{content:'';display:none}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.menu-item-has-children .sub-menu{display:none}
-}@media(min-width:1100px){body.kasil #hero .heroFlex #svgAnimator svg{height:55vh;width:35vw}
-}@media(min-width:1405px){body.kasil #hero .heroFlex #svgAnimator svg{height:60vh;width:30vw}
+}@media(min-width:1100px){body.kasil #hero .heroFlex #svgAnimator svg{height:55vh}
+}@media(min-width:1405px){body.kasil #hero .heroFlex #svgAnimator svg{height:60vh}
 }@media(max-width:767px){body.kasil .textFirstMobile{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}
 body.kasil .textFirstMobile .et_pb_column_1_2{-webkit-box-ordinal-group:2;-webkit-order:1;-ms-flex-order:1;order:1}
 body.kasil .textFirstMobile .et_pb_column_1_2:nth-of-type(2){-webkit-box-ordinal-group:1;-webkit-order:0;-ms-flex-order:0;order:0}
 }@media(max-width:480px){body.kasil h4{font-size:24px}
+body.kasil .flex.container{padding-top:25px !important}
 body.kasil .projectNav .portfolio-return{width:100%}
 }@media(max-width:480px) and (max-width:480px){body.kasil .projectNav .portfolio-return a{width:100%}
 }@-webkit-keyframes DrawLine{to{stroke-dashOffset:0}

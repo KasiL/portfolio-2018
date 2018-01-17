@@ -46,10 +46,28 @@ hr {
         }
     }
 }
+//adds desaturation
+.greyed {
+    filter: saturate(0);
+    transition-duration: 0.3s;
+ 
+    &:hover {
+        filter: saturate(1);
+    }
+}
 
+//fixes h4 on site
 h4 {
     @media (max-width:$screen-xs-min) {
         font-size: 24px;
         
+    }
+}
+
+//fixes divi flexbox padding
+.flex.container{
+    @media (max-width:$screen-xs-min) {
+        padding-top: 25px !important;
+    
     }
 }
