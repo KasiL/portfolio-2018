@@ -27,7 +27,7 @@ body.kasil #main-header #et-top-navigation{text-align:left}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li:hover:before{opacity:1}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-page-ancestor a,body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current-menu-item a,body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li.current_page_item a{opacity:1}
 body.kasil #main-header #et-top-navigation nav#top-menu-nav ul.nav li a{opacity:1}
-body.kasil #main-header #logo{-webkit-transform:inherit;-ms-transform:inherit;transform:inherit}
+body.kasil #main-header #logo{max-width:120px;width:auto}
 body.kasil #hero{background-size:contain;background-position:top right}
 body.kasil #hero .heroFlex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column}
 body.kasil #hero .heroFlex #heroMessage{-webkit-align-self:flex-end;-ms-flex-item-align:end;align-self:flex-end}
