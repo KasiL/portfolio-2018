@@ -9,6 +9,8 @@
 		$et_transparent_nav          = $( '.et_transparent_nav' ),
 		$et_footer_info              = $('#footer-info'),
 		et_footer_info_original_html = et_main_customizer_data.original_footer_credits;
+	var isCustomPostType           = false;
+	var selectorWrapper            = '';
 
 	if ( ! $et_footer_info.length ) {
 		$( '#footer-bottom .container' ).prepend( '<p id="footer-info"></p>' );
@@ -399,7 +401,7 @@
 					// Adding specific class to mark the map as first row section element
 					$et_pb_first_row_first_module.addClass( 'et_beneath_transparent_nav' );
 
-				} else if ( $et_pb_first_row_first_module.is( '.et_pb_fullwidth_menu' ) ) {
+				} else if ( $et_pb_first_row_first_module.is( '.et_pb_menu' ) || $et_pb_first_row_first_module.is( '.et_pb_fullwidth_menu' ) ) {
 
 					/* Desktop / Mobile + Pagebuilder + Fullwidth Menu */
 					$et_pb_first_row_first_module.css({ 'marginTop' : header_height });
@@ -636,7 +638,7 @@
 					// Adding specific class to mark the map as first row section element
 					$et_pb_first_row_first_module.removeClass( 'et_beneath_transparent_nav' );
 
-				} else if ( $et_pb_first_row_first_module.is( '.et_pb_fullwidth_menu' ) ) {
+				} else if ( $et_pb_first_row_first_module.is( '.et_pb_menu' ) || $et_pb_first_row_first_module.is( '.et_pb_fullwidth_menu' ) ) {
 
 					/* Desktop / Mobile + Pagebuilder + Fullwidth Menu */
 					$et_pb_first_row_first_module.css({ 'marginTop' : '' });
@@ -887,14 +889,37 @@
 	}
 
 	/**
+	 * This is a simplified version of {@see et_builder_maybe_wrap_css_selector()}.
+	 * If multiple selectors (eg. selector1, selector2) are provided they will each be wrapped.
+	 *
+	 * @param selector
+	 */
+	function maybe_wrap_css_selector(selector) {
+		if (! isCustomPostType) {
+			return selector;
+		}
+
+		var selectors = selector.split(',');
+		var result    = '';
+
+		_.forEach(selectors, function(css_selector) {
+			result += selectorWrapper + ' ' + css_selector;
+		});
+
+		return result.join(',');
+	}
+
+	var css = maybe_wrap_css_selector;
+
+	/**
 	* Basically mimics et_pb_print_module_styles_css() on functions.php
 	* Append to <head> instead of adding inline styling. Module's individual styling > Customizer's module styles
 	*/
 	function et_print_module_styles_css( id, type, selector, value, important ){
 		// sanitize id into safe style's ID
 		var style_id 		= id.replace(/[ +\/\[\]]/g,'_').toLowerCase(),
-			$style 			= $('#' + style_id),
-			$style_length 	= $style.length;
+			$style 			  = $('#' + style_id),
+			$style_length = $style.length;
 
 		// create DOM
 		var style = $( '<style />', {
@@ -911,7 +936,7 @@
 		// append style into DOM
 		switch( type ){
 			case 'font-size':
-				style.text( selector + "{ font-size: " + value + "px " + important_tag + ";}" );
+				style.text( css(selector) + "{ font-size: " + value + "px " + important_tag + ";}" );
 
 				// Option with specific adjustment for smaller columns
 				var smaller_title_sections = [
@@ -943,48 +968,49 @@
 							break;
 					}
 
-					style.append( ".et_pb_column_1_3 " + selector + ", .et_pb_column_1_4 " + selector + " { font-size: " + font_size + "px " + important_tag + "; }" );
+					style.append( ".et_pb_column_1_3 " + css(selector) + " { font-size: " + font_size + "px " + important_tag + "; }" );
+					style.append( ".et_pb_column_1_4 " + css(selector) + " { font-size: " + font_size + "px " + important_tag + "; }" );
 				}
 				break;
 
 			case 'font-styles':
-				style.text( selector + " { " + et_set_font_styles( value, important_tag ) + " }" );
+				style.text( css(selector) + " { " + et_set_font_styles( value, important_tag ) + " }" );
 				break;
 
 			case 'letter-spacing':
-				style.text( selector + "{ letter-spacing: " + value + "px " + important_tag + ";}" );
+				style.text( css(selector) + "{ letter-spacing: " + value + "px " + important_tag + ";}" );
 				break;
 
 			case 'line-height':
-				style.text( selector + "{ line-height: " + value + "em " + important_tag + ";}" );
+				style.text( css(selector) + "{ line-height: " + value + "em " + important_tag + ";}" );
 				break;
 
 			case 'color':
-				style.text( selector + "{ color: " + value + " " + important_tag + ";}" );
+				style.text( css(selector) + "{ color: " + value + " " + important_tag + ";}" );
 				break;
 
 			case 'background-color':
-				style.text( selector + "{ background-color: " + value + " " + important_tag + ";}" );
+				style.text( css(selector) + "{ background-color: " + value + " " + important_tag + ";}" );
 				break;
 
 			case 'border-radius':
-				style.text( selector + " { -moz-border-radius: " + value + "px; -webkit-border-radius: " + value + "px; border-radius: " + value + "px; }" );
+				style.text( css(selector) + " { -moz-border-radius: " + value + "px; -webkit-border-radius: " + value + "px; border-radius: " + value + "px; }" );
 				break;
 
 			case 'width':
-				style.text( selector + "{ width: " + value + "px " + important_tag + ";}" );
+				style.text( css(selector) + "{ width: " + value + "px " + important_tag + ";}" );
 				break;
 
 			case 'height':
-				style.text( selector + "{ height: " + value + "px " + important_tag + ";}" );
+				style.text( css(selector) + "{ height: " + value + "px " + important_tag + ";}" );
 				break;
 
 			case 'padding':
-				style.text( selector + "{ padding: " + value + "px " + important_tag + ";}" );
+				style.text( css(selector) + "{ padding: " + value + "px " + important_tag + ";}" );
 				break;
 
 			case 'padding-top-bottom':
-				style.text( selector + "{ padding: " + value + "px 0 " + important_tag + ";}" );
+				style.text( css(selector) + "{ padding: " + value + "px 0 " + important_tag + ";}" );
 				break;
 
 			case 'padding-tabs':
@@ -998,14 +1024,16 @@
 					padding_tab_active_bottom = 0;
 				}
 
-				style.text( ".et_pb_tabs_controls li{ padding: " + padding_tab_active_top + "px " + value + "px " + padding_tab_active_bottom + "px; } .et_pb_tabs_controls li.et_pb_tab_active{ padding: " + padding_tab_top_bottom + "px " + value + "px; }  .et_pb_all_tabs { padding: " + padding_tab_content + "px " + value + "px " + important_tag + ";}" );
+				style.text( css('.et_pb_tabs_controls li') + " { padding: " + padding_tab_active_top + "px " + value + "px " + padding_tab_active_bottom + "px; }" );
+				style.text( css('.et_pb_tabs_controls li.et_pb_tab_active') + " { padding: " + padding_tab_top_bottom + "px " + value + "px; }" );
+				style.text( css('.et_pb_all_tabs') + " { padding: " + padding_tab_content + "px " + value + "px " + important_tag + "; }" );
 				break;
 
 			case 'padding-slider':
-				style.text( selector + "{ padding-top: " + value + "%; padding-bottom: " + value + "%; }" );
+				style.text( css(selector) + "{ padding-top: " + value + "%; padding-bottom: " + value + "%; }" );
 
 				if ( 'et_pagebuilder_slider_padding' === id ) {
-					style.append( '@media only screen and ( max-width: 767px ) { ' + selector + '{ padding-top: 16%; padding-bottom: 16%; } }' );
+					style.append( '@media only screen and ( max-width: 767px ) { ' + css(selector) + '{ padding-top: 16%; padding-bottom: 16%; } }' );
 				}
 
 				break;
@@ -1013,24 +1041,28 @@
 			case 'padding-call-to-action':
 				value = parseInt( value );
 
-				style.text( ".et_pb_promo { padding: " + value + "px " + ( value * ( 60 / 40 ) ) + "px; }" );
-				style.append( ".et_pb_column_1_2 .et_pb_promo, .et_pb_column_1_3 .et_pb_promo, .et_pb_column_1_4 .et_pb_promo { padding: " + value + "px; }" );
+				style.text( css('.et_pb_promo') + " { padding: " + value + "px " + ( value * ( 60 / 40 ) ) + "px; }" );
+				style.append( css('.et_pb_column_1_2 .et_pb_promo') + " { padding: " + value + "px; }" );
+				style.append( css('.et_pb_column_1_3 .et_pb_promo') + " { padding: " + value + "px; }" );
+				style.append( css('.et_pb_column_1_4 .et_pb_promo') + " { padding: " + value + "px; }" );
 				break;
 
 			case 'social-icon-size':
 				var icon_margin 	= parseInt( value ) * 0.57;
 				var icon_dimension = parseInt( value ) * 2;
 
-				style.text( ".et_pb_social_media_follow li a.icon{ margin-right: " + icon_margin + "px; width: " + icon_dimension + "px; height: " + icon_dimension + "px; } .et_pb_social_media_follow li a.icon::before{ width: " + icon_dimension + "px; height: " + icon_dimension + "px; font-size: " + value + "px; line-height: " + icon_dimension + "px; } .et_pb_social_media_follow li a.follow_button{ font-size:" + value + "px; }" );
+				style.text( css('.et_pb_social_media_follow li a.icon') + " { margin-right: " + icon_margin + "px; width: " + icon_dimension + "px; height: " + icon_dimension + "px; }" );
+				style.text( css('.et_pb_social_media_follow li a.icon::before') + " { width: " + icon_dimension + "px; height: " + icon_dimension + "px; font-size: " + value + "px; line-height: " + icon_dimension + "px; }" );
+				style.text( css('.et_pb_social_media_follow li a.follow_button') + " { font-size:" + value + "px; }" );
 
 				break;
 
 			case 'border-top-style':
-				style.text( selector + "{ border-top-style: " + value  + " " + important_tag +  "; }" );
+				style.text( css(selector) + "{ border-top-style: " + value  + " " + important_tag +  "; }" );
 				break;
 
 			case 'border-top-width':
-				style.text( selector + "{ border-top-width: " + value  + "px " + important_tag +  "; }" );
+				style.text( css(selector) + "{ border-top-width: " + value  + "px " + important_tag +  "; }" );
 				break;
 		}
 
@@ -1161,6 +1193,25 @@
 
 	et_fix_slide_in_top_bar();
 
+	var $headerPanel       = window.top.wp.customize.panel('et_divi_header_panel');
+	var $headerPanelButton = window.top.jQuery('#accordion-panel-et_divi_header_panel');
+	var $footerPanel       = window.top.wp.customize.panel('et_divi_footer_panel');
+	var $footerPanelButton = window.top.jQuery('#accordion-panel-et_divi_footer_panel');
+
+	if (et_theme_builder_customizer_data.hasHeaderLayout) {
+		$headerPanel.deactivate({ duration: 0 });
+		$headerPanelButton.addClass('et-customizer-hidden');
+	} else {
+		$headerPanelButton.removeClass('et-customizer-hidden');
+	}
+
+	if (et_theme_builder_customizer_data.hasFooterLayout) {
+		$footerPanel.deactivate({ duration: 0 });
+		$footerPanelButton.addClass('et-customizer-hidden');
+	} else {
+		$footerPanelButton.removeClass('et-customizer-hidden');
+	}
+
 	wp.customize( 'blogname', function( value ) {
 		value.bind( function( to ) {
 			$('#logo').attr({ 'alt' : to });
@@ -1189,8 +1240,8 @@
 			$( 'head style#phone_body_font_size' ).remove(),
 			custom_style = "<style id='phone_body_font_size'>\
 								@media only screen and ( max-width: 767px ) {\
-									#main-content, .et_pb_column_1_2 .et_quote_content blockquote cite, .et_pb_column_1_2 .et_link_content a.et_link_main_url, .et_pb_column_1_3 .et_quote_content blockquote cite, .et_pb_column_3_8 .et_quote_content blockquote cite, .et_pb_column_1_4 .et_quote_content blockquote cite, .et_pb_blog_grid .et_quote_content blockquote cite, .et_pb_column_1_3 .et_link_content a.et_link_main_url, .et_pb_column_3_8 .et_link_content a.et_link_main_url, .et_pb_column_1_4 .et_link_content a.et_link_main_url, .et_pb_blog_grid .et_link_content a.et_link_main_url, #main-footer li, #main-footer a, #main-footer p, #main-footer  { font-size:" + to + "px !important; }\
-									.et_pb_slide_content, .et_pb_best_value { font-size:" + to * 1.14 + "px !important; }\
+									#main-content, " + css('.et_pb_column_1_2 .et_quote_content blockquote cite, .et_pb_column_1_2 .et_link_content a.et_link_main_url, .et_pb_column_1_3 .et_quote_content blockquote cite, .et_pb_column_3_8 .et_quote_content blockquote cite, .et_pb_column_1_4 .et_quote_content blockquote cite, .et_pb_blog_grid .et_quote_content blockquote cite, .et_pb_column_1_3 .et_link_content a.et_link_main_url, .et_pb_column_3_8 .et_link_content a.et_link_main_url, .et_pb_column_1_4 .et_link_content a.et_link_main_url, .et_pb_blog_grid .et_link_content a.et_link_main_url') + ", #main-footer li, #main-footer a, #main-footer p, #main-footer  { font-size:" + to + "px !important; }\
+									" + css('.et_pb_slide_content, .et_pb_best_value') + " { font-size:" + to * 1.14 + "px !important; }\
 								}\
 							</style>",
 			$( 'head' ).append( custom_style );
@@ -1202,8 +1253,8 @@
 			$( 'head style#tablet_body_font_size' ).remove(),
 			custom_style = "<style id='tablet_body_font_size'>\
 								@media only screen and ( max-width: 980px ) {\
-									#main-content, .et_pb_column_1_2 .et_quote_content blockquote cite, .et_pb_column_1_2 .et_link_content a.et_link_main_url, .et_pb_column_1_3 .et_quote_content blockquote cite, .et_pb_column_3_8 .et_quote_content blockquote cite, .et_pb_column_1_4 .et_quote_content blockquote cite, .et_pb_blog_grid .et_quote_content blockquote cite, .et_pb_column_1_3 .et_link_content a.et_link_main_url, .et_pb_column_3_8 .et_link_content a.et_link_main_url, .et_pb_column_1_4 .et_link_content a.et_link_main_url, .et_pb_blog_grid .et_link_content a.et_link_main_url, #main-footer li, #main-footer a, #main-footer p, #main-footer  { font-size:" + to + "px !important; }\
-									.et_pb_slide_content, .et_pb_best_value { font-size:" + to * 1.14 + "px !important; }\
+									#main-content, " + css('.et_pb_column_1_2 .et_quote_content blockquote cite, .et_pb_column_1_2 .et_link_content a.et_link_main_url, .et_pb_column_1_3 .et_quote_content blockquote cite, .et_pb_column_3_8 .et_quote_content blockquote cite, .et_pb_column_1_4 .et_quote_content blockquote cite, .et_pb_blog_grid .et_quote_content blockquote cite, .et_pb_column_1_3 .et_link_content a.et_link_main_url, .et_pb_column_3_8 .et_link_content a.et_link_main_url, .et_pb_column_1_4 .et_link_content a.et_link_main_url, .et_pb_blog_grid .et_link_content a.et_link_main_url') + ", #main-footer li, #main-footer a, #main-footer p, #main-footer  { font-size:" + to + "px !important; }\
+									" + css('.et_pb_slide_content, .et_pb_best_value') + " { font-size:" + to * 1.14 + "px !important; }\
 								}\
 							</style>",
 			$( 'head' ).append( custom_style );
@@ -1247,7 +1298,7 @@
 			$( 'head style#phone_row_height' ).remove(),
 			custom_style = "<style id='phone_row_height'>\
 								@media only screen and ( max-width: 767px ) {\
-									.et_pb_row, .et_pb_column .et_pb_row_inner { padding: " + to + "px 0 !important; }\
+									" + css('.et_pb_row, .et_pb_column .et_pb_row_inner') + " { padding: " + to + "px 0 !important; }\
 								}\
 							</style>",
 			$( 'head' ).append( custom_style );
@@ -1259,7 +1310,7 @@
 			$( 'head style#tablet_row_height' ).remove(),
 			custom_style = "<style id='tablet_row_height'>\
 								@media only screen and ( max-width: 980px ) {\
-									.et_pb_row, .et_pb_column .et_pb_row_inner { padding: " + to + "px 0 !important; }\
+									" + css('.et_pb_row, .et_pb_column .et_pb_row_inner') + " { padding: " + to + "px 0 !important; }\
 								}\
 							</style>",
 			$( 'head' ).append( custom_style );
@@ -1271,7 +1322,7 @@
 			$( 'head style#phone_section_height' ).remove(),
 			custom_style = "<style id='phone_section_height'>\
 								@media only screen and ( max-width: 767px ) {\
-									.et_pb_section { padding: " + to + "px 0; }\
+									" + css('.et_pb_section') + " { padding: " + to + "px 0; }\
 								}\
 							</style>",
 			$( 'head' ).append( custom_style );
@@ -1283,7 +1334,7 @@
 			$( 'head style#tablet_section_height' ).remove(),
 			custom_style = "<style id='tablet_section_height'>\
 								@media only screen and ( max-width: 980px ) {\
-									.et_pb_section { padding: " + to + "px 0; }\
+									" + css('.et_pb_section') + " { padding: " + to + "px 0; }\
 								}\
 							</style>",
 			$( 'head' ).append( custom_style );
@@ -1311,7 +1362,7 @@
 		value.bind( function( to ) {
 			$( 'head style#body_header_height' ).remove(),
 			custom_style = "<style id='body_header_height'>\
-									h1, h2, h3, h4, h5, h6, .et_quote_content blockquote p, .et_pb_slide_description .et_pb_slide_title { line-height: " + to + "em; }\
+									h1, h2, h3, h4, h5, h6, " + css('h1, h2, h3, h4, h5, h6, .et_quote_content blockquote p, .et_pb_slide_description .et_pb_slide_title') + " { line-height: " + to + "em; }\
 							</style>",
 			$( 'head' ).append( custom_style );
 		} );
@@ -1331,7 +1382,7 @@
 		value.bind( function( to ) {
 			$( 'head style#body_header_spacing' ).remove(),
 			custom_style = "<style id='body_header_spacing'>\
-									h1, h2, h3, h4, h5, h6, .et_quote_content blockquote p, .et_pb_slide_description .et_pb_slide_title { letter-spacing: " + to + "px; }\
+									h1, h2, h3, h4, h5, h6, " + css('h1, h2, h3, h4, h5, h6, .et_quote_content blockquote p, .et_pb_slide_description .et_pb_slide_title') + " { letter-spacing: " + to + "px; }\
 							</style>",
 			$( 'head' ).append( custom_style );
 		} );
@@ -1377,13 +1428,15 @@
 			$( 'head style#phone_header_font_size' ).remove(),
 			custom_style = "<style id='phone_header_font_size'>\
 								@media only screen and ( max-width: 767px ) {\
-									h1 { font-size: " + to + "px !important; }\
-									h2 { font-size: " + to * 0.86 + "px !important; }\
-									h3 { font-size: " + to * 0.73 + "px !important; }\
-									.woocommerce ul.products li.product h3, .woocommerce-page ul.products li.product h3, .et_pb_gallery_grid .et_pb_gallery_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2, .et_pb_filterable_portfolio_grid .et_pb_portfolio_item h2, .et_pb_column_1_4 .et_pb_audio_module_content h2 { font-size: " + to * 0.53 + "px !important; }\
-									#main-content h4, .et_pb_column_1_3 .et_pb_post h2, .et_pb_column_1_4 .et_pb_post h2, .et_pb_blog_grid h2, .et_pb_column_1_3 .et_quote_content blockquote p, .et_pb_column_3_8 .et_quote_content blockquote p, .et_pb_column_1_4 .et_quote_content blockquote p, .et_pb_blog_grid .et_quote_content blockquote p, .et_pb_column_1_3 .et_link_content h2, .et_pb_column_3_8 .et_link_content h2, .et_pb_column_1_4 .et_link_content h2, .et_pb_blog_grid .et_link_content h2, .et_pb_column_1_3 .et_audio_content h2, .et_pb_column_3_8 .et_audio_content h2, .et_pb_column_1_4 .et_audio_content h2, .et_pb_blog_grid .et_audio_content h2, .et_pb_column_3_8 .et_pb_audio_module_content h2, .et_pb_column_1_3 .et_pb_audio_module_content h2, .et_pb_gallery_grid .et_pb_gallery_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2, .et_pb_filterable_portfolio_grid .et_pb_portfolio_item h2, .et_pb_circle_counter h3, .et_pb_number_counter h3 { font-size: " + to * 0.6 + "px !important; }\
-									.et_pb_slide_description .et_pb_slide_title { font-size: " + to * 1.53 + "px !important; }\
+									h1, " + css('h1') + " { font-size: " + to + "px !important; }\
+									h2, " + css('h2') + " { font-size: " + to * 0.86 + "px !important; }\
+									h3, " + css('h3') + " { font-size: " + to * 0.73 + "px !important; }\
+									.woocommerce ul.products li.product h3, .woocommerce-page ul.products li.product h3, " + css('.et_pb_gallery_grid .et_pb_gallery_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2, .et_pb_filterable_portfolio_grid .et_pb_portfolio_item h2, .et_pb_column_1_4 .et_pb_audio_module_content h2') + " { font-size: " + to * 0.53 + "px !important; }\
+									#main-content h4, " + css('#main-content h4, .et_pb_column_1_3 .et_pb_post h2, .et_pb_column_1_4 .et_pb_post h2, .et_pb_blog_grid h2, .et_pb_column_1_3 .et_quote_content blockquote p, .et_pb_column_3_8 .et_quote_content blockquote p, .et_pb_column_1_4 .et_quote_content blockquote p, .et_pb_blog_grid .et_quote_content blockquote p, .et_pb_column_1_3 .et_link_content h2, .et_pb_column_3_8 .et_link_content h2, .et_pb_column_1_4 .et_link_content h2, .et_pb_blog_grid .et_link_content h2, .et_pb_column_1_3 .et_audio_content h2, .et_pb_column_3_8 .et_audio_content h2, .et_pb_column_1_4 .et_audio_content h2, .et_pb_blog_grid .et_audio_content h2, .et_pb_column_3_8 .et_pb_audio_module_content h2, .et_pb_column_1_3 .et_pb_audio_module_content h2, .et_pb_gallery_grid .et_pb_gallery_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2, .et_pb_filterable_portfolio_grid .et_pb_portfolio_item h2, .et_pb_circle_counter h3, .et_pb_number_counter h3') + " { font-size: " + to * 0.6 + "px !important; }\
+									" + css('.et_pb_slide_description .et_pb_slide_title') + " { font-size: " + to * 1.53 + "px !important; }\
 									.footer-widget h4 { font-size: " + to * 0.6 + "px !important; }\
+									h5, " + css('h5') + " { font-size: " + to * 0.53 + "px !important; }\
+									h6, " + css('h6') + " { font-size: " + to * 0.47 + "px !important; }\
 								}\
 							</style>",
 			$( 'head' ).append( custom_style );
@@ -1395,13 +1448,15 @@
 			$( 'head style#tablet_header_font_size' ).remove(),
 			custom_style = "<style id='tablet_header_font_size'>\
 								@media only screen and ( max-width: 980px ) {\
-									h1 { font-size: " + to + "px !important; }\
-									h2 { font-size: " + to * 0.86 + "px !important; }\
-									h3 { font-size: " + to * 0.73 + "px !important; }\
-									.woocommerce ul.products li.product h3, .woocommerce-page ul.products li.product h3, .et_pb_gallery_grid .et_pb_gallery_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2, .et_pb_filterable_portfolio_grid .et_pb_portfolio_item h2, .et_pb_column_1_4 .et_pb_audio_module_content h2 { font-size: " + to * 0.53 + "px !important; }\
-									#main-content h4, .et_pb_column_1_3 .et_pb_post h2, .et_pb_column_1_4 .et_pb_post h2, .et_pb_blog_grid h2, .et_pb_column_1_3 .et_quote_content blockquote p, .et_pb_column_3_8 .et_quote_content blockquote p, .et_pb_column_1_4 .et_quote_content blockquote p, .et_pb_blog_grid .et_quote_content blockquote p, .et_pb_column_1_3 .et_link_content h2, .et_pb_column_3_8 .et_link_content h2, .et_pb_column_1_4 .et_link_content h2, .et_pb_blog_grid .et_link_content h2, .et_pb_column_1_3 .et_audio_content h2, .et_pb_column_3_8 .et_audio_content h2, .et_pb_column_1_4 .et_audio_content h2, .et_pb_blog_grid .et_audio_content h2, .et_pb_column_3_8 .et_pb_audio_module_content h2, .et_pb_column_1_3 .et_pb_audio_module_content h2, .et_pb_gallery_grid .et_pb_gallery_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2, .et_pb_filterable_portfolio_grid .et_pb_portfolio_item h2, .et_pb_circle_counter h3, .et_pb_number_counter h3 { font-size: " + to * 0.6 + "px !important; }\
-									.et_pb_slide_description .et_pb_slide_title { font-size: " + to * 1.53 + "px !important; }\
+									h1, " + css('h1') + " { font-size: " + to + "px !important; }\
+									h2, " + css('h2') + " { font-size: " + to * 0.86 + "px !important; }\
+									h3, " + css('h3') + " { font-size: " + to * 0.73 + "px !important; }\
+									.woocommerce ul.products li.product h3, .woocommerce-page ul.products li.product h3, " + css('.et_pb_gallery_grid .et_pb_gallery_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2, .et_pb_filterable_portfolio_grid .et_pb_portfolio_item h2, .et_pb_column_1_4 .et_pb_audio_module_content h2') + " { font-size: " + to * 0.53 + "px !important; }\
+									#main-content h4, " + css('#main-content h4, .et_pb_column_1_3 .et_pb_post h2, .et_pb_column_1_4 .et_pb_post h2, .et_pb_blog_grid h2, .et_pb_column_1_3 .et_quote_content blockquote p, .et_pb_column_3_8 .et_quote_content blockquote p, .et_pb_column_1_4 .et_quote_content blockquote p, .et_pb_blog_grid .et_quote_content blockquote p, .et_pb_column_1_3 .et_link_content h2, .et_pb_column_3_8 .et_link_content h2, .et_pb_column_1_4 .et_link_content h2, .et_pb_blog_grid .et_link_content h2, .et_pb_column_1_3 .et_audio_content h2, .et_pb_column_3_8 .et_audio_content h2, .et_pb_column_1_4 .et_audio_content h2, .et_pb_blog_grid .et_audio_content h2, .et_pb_column_3_8 .et_pb_audio_module_content h2, .et_pb_column_1_3 .et_pb_audio_module_content h2, .et_pb_gallery_grid .et_pb_gallery_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2, .et_pb_filterable_portfolio_grid .et_pb_portfolio_item h2, .et_pb_circle_counter h3, .et_pb_number_counter h3') + " { font-size: " + to * 0.6 + "px !important; }\
+									" + css('.et_pb_slide_description .et_pb_slide_title') + " { font-size: " + to * 1.53 + "px !important; }\
 									.footer-widget h4 { font-size: " + to * 0.6 + "px !important; }\
+									h5, " + css('h5') + " { font-size: " + to * 0.53 + "px !important; }\
+									h6, " + css('h6') + " { font-size: " + to * 0.47 + "px !important; }\
 								}\
 							</style>",
 			$( 'head' ).append( custom_style );
@@ -1416,9 +1471,9 @@
 
 	wp.customize( 'et_divi[accent_color]', function( value ) {
 		value.bind( function( to ) {
-			var	$accent_style = "<style id='accent_color'>.et_pb_counter_amount, .et_pb_featured_table .et_pb_pricing_heading, .et_pb_pricing_table_button, .comment-reply-link, .form-submit .et_pb_button, .et_quote_content, .et_link_content, .et_audio_content, .et_pb_post_slider.et_pb_bg_layout_dark, #page-container .et_slide_in_menu_container, .et_pb_contact p input[type='radio']:checked + label i:before, #top-header, .et-fixed-header#top-header, .et-fixed-header#top-header #et-secondary-nav li ul { background-color: " + to + "; }\
-								#et_search_icon:hover, .mobile_menu_bar:before, .footer-widget h4, #main-footer .footer-widget h4, .et-social-icon a:hover, .et_pb_sum, .et_pb_pricing li a, .et_overlay:before, .et_pb_member_social_links a:hover, .et_pb_widget li a:hover, .et_pb_bg_layout_light .et_pb_promo_button, .et_pb_bg_layout_light .et_pb_more_button, .et_pb_filterable_portfolio .et_pb_portfolio_filters li a.active, .et_pb_filterable_portfolio .et_pb_portofolio_pagination ul li a.active, .et_pb_gallery .et_pb_gallery_pagination ul li a.active, .wp-pagenavi span.current, .wp-pagenavi a:hover, .et_pb_contact_submit, .et_password_protected_form .et_submit_button, .et_pb_bg_layout_light .et_pb_newsletter_button, .nav-single a, .posted_in a, .et_pb_contact p input[type='checkbox']:checked + label i:before, .woocommerce .star-rating span::before { color:" + to + "; }\
-								.et-search-form, .nav li ul, .et_mobile_menu, .footer-widget li:before, .et_pb_pricing li:before { border-color: " + to + "; }\
+			var	$accent_style = "<style id='accent_color'>" + css('.et_pb_counter_amount, .et_pb_featured_table .et_pb_pricing_heading, .et_pb_pricing_table_button') + ", .comment-reply-link, " + css('.form-submit .et_pb_button, .et_quote_content, .et_link_content, .et_audio_content, .et_pb_post_slider.et_pb_bg_layout_dark') + ", #page-container .et_slide_in_menu_container, " + css('.et_pb_contact p input[type=\'radio\']:checked + label i:before') + ", #top-header, .et-fixed-header#top-header, .et-fixed-header#top-header #et-secondary-nav li ul { background-color: " + to + "; }\
+								#et_search_icon:hover, .mobile_menu_bar:before" + css('.mobile_menu_bar:before') + ", .footer-widget h4, #main-footer .footer-widget h4, .et-social-icon a:hover, " + css('.et_pb_sum, .et_pb_pricing li a, .et_overlay:before, .et_pb_member_social_links a:hover, .et_pb_widget li a:hover, .et_pb_bg_layout_light .et_pb_promo_button, .et_pb_bg_layout_light .et_pb_more_button, .et_pb_filterable_portfolio .et_pb_portfolio_filters li a.active, .et_pb_filterable_portfolio .et_pb_portofolio_pagination ul li a.active, .et_pb_gallery .et_pb_gallery_pagination ul li a.active') + ", .wp-pagenavi span.current, .wp-pagenavi a:hover, " + css('.et_pb_contact_submit') + ", .et_password_protected_form .et_submit_button, " + css('.et_pb_bg_layout_light .et_pb_newsletter_button') + ", .nav-single a, .posted_in a, .tagged_as a, " + css('.nav-single a, .posted_in a, .et_pb_contact p input[type=\'checkbox\']:checked + label i:before') + ", .woocommerce .star-rating span::before, " + css('.woocommerce .star-rating span::before') + " { color:" + to + "; }\
+								.et-search-form, .nav li ul, .et_mobile_menu, " + css('.nav li ul, .et_mobile_menu') + ", .footer-widget li:before, .et_pb_pricing li:before { border-color: " + to + "; }\
 								</style>",
 				style_id = 'style#accent_color';
 
@@ -1586,7 +1641,7 @@
 		value.bind( function( to ) {
 			$( 'head style#header_color' ).remove(),
 			custom_style = "<style id='header_color'>\
-								h1,h2,h3,h4,h5,h6 { color: " + to + "; }\
+								h1,h2,h3,h4,h5,h6" + css('h1,h2,h3,h4,h5,h6') + " { color: " + to + "; }\
 							</style>",
 			$( 'head' ).append( custom_style );
 		} );
@@ -2094,19 +2149,24 @@
 		value.bind( function( to ) {
 			et_maybe_create_secondary_nav();
 
-			var $phone_number = $( '#et-info-phone' );
+			var $info         = $('#et-info');
+			var $phone_number = $('#et-info-phone');
+			var $container    = $('#top-header .container');
 
-			if ( ! $phone_number.length ) {
-				if ( ! $( '#et-info' ).length ) {
-					$( '#top-header .container' ).prepend( '<div id="et-info"></div>' );
+			if (!$phone_number.length) {
+				if (!$info.length && $container.length) {
+					$info = $('<div id="et-info"></div>');
+					$container.prepend($info);
 				}
 
-				$( '#et-info' ).prepend( '<span id="et-info-phone"></span>' );
+				if ($info.length) {
+					$info.prepend( '<span id="et-info-phone"></span>' );
+				}
 
 				$phone_number = $( '#et-info-phone' );
 			}
 
-			if ( to !== '' ) {
+			if ( to.trim() !== '' ) {
 				$phone_number.show().html( to );
 			} else {
 				$phone_number.hide();
@@ -2119,19 +2179,24 @@
 		value.bind( function( to ) {
 			et_maybe_create_secondary_nav();
 
-			var $email = $( '#et-info-email' );
+			var $info      = $('#et-info');
+			var $email     = $('#et-info-email');
+			var $container = $('#top-header .container');
 
-			if ( ! $email.length ) {
-				if ( ! $( '#et-info' ).length ) {
-					$( '#top-header .container' ).append( '<div id="et-info"></div>' );
+			if (!$email.length) {
+				if (!$info.length && $container.length) {
+					$info = $('<div id="et-info"></div>');
+					$container.prepend($info);
 				}
 
-				$( '#et-info' ).append( '<span id="et-info-email"></span>' );
+				if ($info.length) {
+					$info.append('<span id="et-info-email"></span>');
+				}
 
 				$email = $( '#et-info-email' );
 			}
 
-			if ( to !== '' ) {
+			if ( to.trim() !== '' ) {
 				$email.show().text( to );
 			} else {
 				$email.hide();
@@ -2478,1376 +2543,6 @@
 		} );
 	} );
 
-	/* Module Styles Panel */
-
-		/* Gallery */
-			wp.customize( 'et_divi[et_pb_gallery-zoom_icon_color]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_gallery-zoom_icon_color]',
-						'color',
-						'.et_pb_gallery_image .et_overlay:before',
-						to,
-						'use_important'
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_gallery-hover_overlay_color]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_gallery-hover_overlay_color]',
-						'background-color',
-						'.et_pb_gallery_image .et_overlay',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_gallery-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_gallery-title_font_size]',
-						'font-size',
-						'.et_pb_gallery_grid .et_pb_gallery_item .et_pb_gallery_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_gallery-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_gallery-title_font_style]',
-						'font-styles',
-						'.et_pb_gallery_grid .et_pb_gallery_item .et_pb_gallery_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_gallery-caption_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_gallery-caption_font_size]',
-						'font-size',
-						'.et_pb_gallery .et_pb_gallery_item .et_pb_gallery_caption',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_gallery-caption_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_gallery-caption_font_style]',
-						'font-styles',
-						'.et_pb_gallery .et_pb_gallery_item .et_pb_gallery_caption',
-						to
-					);
-				} );
-			} );
-
-		/* Blurb */
-			wp.customize( 'et_divi[et_pb_blurb-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					// Print style
-					et_print_module_styles_css(
-						'et_divi[et_pb_blurb-header_font_size]',
-						'font-size',
-						'.et_pb_blurb h4',
-						to
-					);
-				} );
-			} );
-
-		/* Tabs */
-			wp.customize( 'et_divi[et_pb_tabs-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_tabs-title_font_size]',
-						'font-size',
-						'.et_pb_tabs_controls li',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_tabs-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_tabs-title_font_style]',
-						'font-styles',
-						'.et_pb_tabs_controls li',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_tabs-padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_tabs-padding]',
-						'padding-tabs',
-						'',
-						to
-					);
-				} );
-			} );
-
-		/* Slider */
-			wp.customize( 'et_divi[et_pb_slider-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_slider-header_font_size]',
-						'font-size',
-						'.et_pb_slider_fullwidth_off .et_pb_slide_description .et_pb_slide_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_slider-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_slider-header_font_style]',
-						'font-styles',
-						'.et_pb_slider_fullwidth_off .et_pb_slide_description .et_pb_slide_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_slider-body_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_slider-body_font_size]',
-						'font-size',
-						'.et_pb_slider_fullwidth_off .et_pb_slide_content',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_slider-body_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_slider-body_font_style]',
-						'font-styles',
-						'.et_pb_slider_fullwidth_off .et_pb_slide_content',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_slider-padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_slider-padding]',
-						'padding-slider',
-						'.et_pb_slider_fullwidth_off .et_pb_slide_description',
-						to
-					);
-
-					et_fix_slider_height();
-				} );
-			} );
-
-		/* Testimonial */
-			wp.customize( 'et_divi[et_pb_testimonial-portrait_border_radius]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_testimonial-portrait_border_radius]',
-						'border-radius',
-						'.et_pb_testimonial_portrait, .et_pb_testimonial_portrait:before',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_testimonial-portrait_width]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_testimonial-portrait_width]',
-						'width',
-						'.et_pb_testimonial_portrait',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_testimonial-portrait_height]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_testimonial-portrait_height]',
-						'height',
-						'.et_pb_testimonial_portrait',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_testimonial-author_name_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_testimonial-author_name_font_style]',
-						'font-styles',
-						'.et_pb_testimonial_author',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_testimonial-author_details_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_testimonial-author_details_font_style]',
-						'font-styles',
-						'p.et_pb_testimonial_meta',
-						to
-					);
-				} );
-			} );
-
-		/* Pricing Table */
-			wp.customize( 'et_divi[et_pb_pricing_tables-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_pricing_tables-header_font_size]',
-						'font-size',
-						'.et_pb_pricing_heading h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_pricing_tables-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_pricing_tables-header_font_style]',
-						'font-styles',
-						'.et_pb_pricing_heading h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_pricing_tables-subheader_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_pricing_tables-subheader_font_size]',
-						'font-size',
-						'.et_pb_best_value',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_pricing_tables-subheader_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_pricing_tables-subheader_font_style]',
-						'font-styles',
-						'.et_pb_best_value',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_pricing_tables-price_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_pricing_tables-price_font_size]',
-						'font-size',
-						'.et_pb_sum',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_pricing_tables-price_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_pricing_tables-price_font_style]',
-						'font-styles',
-						'.et_pb_sum',
-						to
-					);
-				} );
-			} );
-
-		/* Call to Action */
-			wp.customize( 'et_divi[et_pb_cta-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_cta-header_font_size]',
-						'font-size',
-						'.et_pb_promo h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_cta-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_cta-header_font_style]',
-						'font-styles',
-						'.et_pb_promo h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_cta-custom_padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_cta-custom_padding]',
-						'padding-call-to-action',
-						'',
-						to
-					);
-				} );
-			} );
-
-		/* Audio */
-			wp.customize( 'et_divi[et_pb_audio-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_audio-title_font_size]',
-						'font-size',
-						'.et_pb_audio_module_content h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_audio-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_audio-title_font_style]',
-						'font-styles',
-						'.et_pb_audio_module_content h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_audio-caption_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_audio-caption_font_size]',
-						'font-size',
-						'.et_pb_audio_module p',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_audio-caption_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_audio-caption_font_style]',
-						'font-styles',
-						'.et_pb_audio_module p',
-						to
-					);
-				} );
-			} );
-
-		/* Email Optin */
-			wp.customize( 'et_divi[et_pb_signup-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_signup-header_font_size]',
-						'font-size',
-						'.et_pb_subscribe h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_signup-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_signup-header_font_style]',
-						'font-styles',
-						'.et_pb_subscribe h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_signup-padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_signup-padding]',
-						'padding',
-						'.et_pb_subscribe',
-						to
-					);
-				} );
-			} );
-
-		/* Login */
-			wp.customize( 'et_divi[et_pb_login-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_login-header_font_size]',
-						'font-size',
-						'.et_pb_login h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_login-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_login-header_font_style]',
-						'font-styles',
-						'.et_pb_login h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_login-custom_padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_login-custom_padding]',
-						'padding',
-						'.et_pb_login',
-						to
-					);
-				} );
-			} );
-
-		/* Portfolio */
-			wp.customize( 'et_divi[et_pb_portfolio-zoom_icon_color]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_portfolio-zoom_icon_color]',
-						'color',
-						'.et_pb_portfolio .et_overlay:before, .et_pb_fullwidth_portfolio .et_overlay:before, .et_pb_portfolio_grid .et_overlay:before',
-						to,
-						'use_important'
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_portfolio-hover_overlay_color]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_portfolio-hover_overlay_color]',
-						'background-color',
-						'.et_pb_portfolio .et_overlay, .et_pb_fullwidth_portfolio .et_overlay, .et_pb_portfolio_grid .et_overlay',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_portfolio-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_portfolio-title_font_size]',
-						'font-size',
-						'.et_pb_portfolio .et_pb_portfolio_item h2, .et_pb_fullwidth_portfolio .et_pb_portfolio_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_portfolio-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_portfolio-title_font_style]',
-						'font-styles',
-						'.et_pb_portfolio .et_pb_portfolio_item h2, .et_pb_fullwidth_portfolio .et_pb_portfolio_item h3, .et_pb_portfolio_grid .et_pb_portfolio_item h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_portfolio-caption_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_portfolio-caption_font_size]',
-						'font-size',
-						'.et_pb_portfolio .et_pb_portfolio_item .post-meta, .et_pb_fullwidth_portfolio .et_pb_portfolio_item .post-meta, .et_pb_portfolio_grid .et_pb_portfolio_item .post-meta',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_portfolio-caption_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_portfolio-caption_font_style]',
-						'font-styles',
-						'.et_pb_portfolio .et_pb_portfolio_item .post-meta, .et_pb_fullwidth_portfolio .et_pb_portfolio_item .post-meta, .et_pb_portfolio_grid .et_pb_portfolio_item .post-meta',
-						to
-					);
-				} );
-			} );
-
-		/* Filterable Portfolio */
-			wp.customize( 'et_divi[et_pb_filterable_portfolio-zoom_icon_color]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_filterable_portfolio-zoom_icon_color]',
-						'color',
-						'.et_pb_filterable_portfolio .et_overlay:before',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_filterable_portfolio-hover_overlay_color]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_filterable_portfolio-hover_overlay_color]',
-						'background-color',
-						'.et_pb_filterable_portfolio .et_overlay',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_filterable_portfolio-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_filterable_portfolio-title_font_size]',
-						'font-size',
-						'.et_pb_filterable_portfolio .et_pb_portfolio_item h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_filterable_portfolio-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_filterable_portfolio-title_font_style]',
-						'font-styles',
-						'.et_pb_filterable_portfolio .et_pb_portfolio_item h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_filterable_portfolio-caption_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_filterable_portfolio-caption_font_size]',
-						'font-size',
-						'.et_pb_filterable_portfolio .et_pb_portfolio_item .post-meta',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_filterable_portfolio-caption_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_filterable_portfolio-caption_font_style]',
-						'font-styles',
-						'.et_pb_filterable_portfolio .et_pb_portfolio_item .post-meta',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_filterable_portfolio-filter_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_filterable_portfolio-filter_font_size]',
-						'font-size',
-						'.et_pb_filterable_portfolio .et_pb_portfolio_filters li',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_filterable_portfolio-filter_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_filterable_portfolio-filter_font_style]',
-						'font-styles',
-						'.et_pb_filterable_portfolio .et_pb_portfolio_filters li',
-						to
-					);
-				} );
-			} );
-
-		/* Bar Counter */
-			wp.customize( 'et_divi[et_pb_counters-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_counters-title_font_size]',
-						'font-size',
-						'.et_pb_counters .et_pb_counter_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_counters-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_counters-title_font_style]',
-						'font-styles',
-						'.et_pb_counters .et_pb_counter_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_counters-percent_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_counters-percent_font_size]',
-						'font-size',
-						'.et_pb_counters .et_pb_counter_amount',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_counters-percent_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_counters-percent_font_style]',
-						'font-styles',
-						'.et_pb_counters .et_pb_counter_amount',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_counters-border_radius]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_counters-border_radius]',
-						'border-radius',
-						'.et_pb_counters .et_pb_counter_amount, .et_pb_counters .et_pb_counter_container',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_counters-padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_counters-padding]',
-						'padding',
-						'.et_pb_counter_amount',
-						to
-					);
-				} );
-			} );
-
-		/* Circle Counter */
-			wp.customize( 'et_divi[et_pb_circle_counter-number_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_circle_counter-number_font_size]',
-						'font-size',
-						'.et_pb_circle_counter .percent p',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_circle_counter-number_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_circle_counter-number_font_style]',
-						'font-styles',
-						'.et_pb_circle_counter .percent p',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_circle_counter-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_circle_counter-title_font_size]',
-						'font-size',
-						'.et_pb_circle_counter h3',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_circle_counter-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_circle_counter-title_font_style]',
-						'font-styles',
-						'.et_pb_circle_counter h3',
-						to
-					);
-				} );
-			} );
-
-		/* Number Counter */
-			wp.customize( 'et_divi[et_pb_number_counter-number_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_number_counter-number_font_size]',
-						'font-size',
-						'.et_pb_number_counter .percent p',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_number_counter-number_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_number_counter-number_font_style]',
-						'font-styles',
-						'.et_pb_number_counter .percent p',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_number_counter-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_number_counter-title_font_size]',
-						'font-size',
-						'.et_pb_number_counter h3',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_number_counter-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_number_counter-title_font_style]',
-						'font-styles',
-						'.et_pb_number_counter h3',
-						to
-					);
-				} );
-			} );
-
-		/* Accordion */
-			wp.customize( 'et_divi[et_pb_accordion-toggle_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_accordion-toggle_font_size]',
-						'font-size',
-						'.et_pb_accordion .et_pb_toggle_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_accordion-toggle_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_accordion-toggle_font_style]',
-						'font-styles',
-						'.et_pb_accordion .et_pb_toggle.et_pb_toggle_open .et_pb_toggle_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_accordion-inactive_toggle_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_accordion-inactive_toggle_font_style]',
-						'font-styles',
-						'.et_pb_accordion .et_pb_toggle.et_pb_toggle_close .et_pb_toggle_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_accordion-toggle_icon_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_accordion-toggle_icon_size]',
-						'font-size',
-						'.et_pb_accordion .et_pb_toggle_title:before',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_accordion-custom_padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_accordion-custom_padding]',
-						'padding',
-						'.et_pb_accordion .et_pb_toggle_open, .et_pb_accordion .et_pb_toggle_close',
-						to
-					);
-				} );
-			} );
-
-		/* Toggle */
-			wp.customize( 'et_divi[et_pb_toggle-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_toggle-title_font_size]',
-						'font-size',
-						'.et_pb_toggle.et_pb_toggle_item h5',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_toggle-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_toggle-title_font_style]',
-						'font-styles',
-						'.et_pb_toggle.et_pb_toggle_item.et_pb_toggle_open h5',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_toggle-inactive_title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_toggle-inactive_title_font_style]',
-						'font-styles',
-						'.et_pb_toggle.et_pb_toggle_item.et_pb_toggle_close h5',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_toggle-toggle_icon_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_toggle-toggle_icon_size]',
-						'font-size',
-						'.et_pb_toggle.et_pb_toggle_item .et_pb_toggle_title:before',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_toggle-custom_padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_toggle-custom_padding]',
-						'padding',
-						'.et_pb_toggle.et_pb_toggle_item',
-						to
-					);
-				} );
-			} );
-
-		/* Contact Form */
-			wp.customize( 'et_divi[et_pb_contact_form-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_contact_form-title_font_size]',
-						'font-size',
-						'.et_pb_contact_form_container .et_pb_contact_main_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_contact_form-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_contact_form-title_font_style]',
-						'font-styles',
-						'.et_pb_contact_form_container .et_pb_contact_main_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_contact_form-form_field_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_contact_form-form_field_font_size]',
-						'font-size',
-						'.et_pb_contact_form_container .et_pb_contact p input, .et_pb_contact_form_container .et_pb_contact p textarea',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_contact_form-form_field_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_contact_form-form_field_font_style]',
-						'font-styles',
-						'.et_pb_contact_form_container .et_pb_contact p input, .et_pb_contact_form_container .et_pb_contact p textarea',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_contact_form-captcha_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_contact_form-captcha_font_size]',
-						'font-size',
-						'.et_pb_contact_captcha_question',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_contact_form-captcha_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_contact_form-captcha_font_style]',
-						'font-styles',
-						'.et_pb_contact_captcha_question',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_contact_form-padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_contact_form-padding]',
-						'padding',
-						'.et_pb_contact p input, .et_pb_contact p textarea',
-						to
-					);
-				} );
-			} );
-
-		/* Sidebar */
-			wp.customize( 'et_divi[et_pb_sidebar-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_sidebar-header_font_style]',
-						'font-styles',
-						'.et_pb_widget_area h4',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_sidebar-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_sidebar-header_font_size]',
-						'font-size',
-						'.et_pb_widget_area h4',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_sidebar-remove_border]', function( value ) {
-				value.bind( function( to ) {
-					if ( to ){
-						$('body').addClass( 'et_pb_no_sidebar_vertical_divider' );
-					} else {
-						$('body').removeClass( 'et_pb_no_sidebar_vertical_divider' );
-					}
-				} );
-			} );
-
-		/* Person */
-			wp.customize( 'et_divi[et_pb_team_member-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_team_member-header_font_size]',
-						'font-size',
-						'.et_pb_team_member h4',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_team_member-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_team_member-header_font_style]',
-						'font-styles',
-						'.et_pb_team_member h4',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_team_member-subheader_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_team_member-subheader_font_size]',
-						'font-size',
-						'.et_pb_team_member .et_pb_member_position',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_team_member-subheader_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_team_member-subheader_font_style]',
-						'font-styles',
-						'.et_pb_team_member .et_pb_member_position',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_team_member-social_network_icon_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_team_member-social_network_icon_size]',
-						'font-size',
-						'.et_pb_member_social_links a',
-						to
-					);
-				} );
-			} );
-
-		/* Divider */
-			wp.customize( 'et_divi[et_pb_divider-divider_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_divider-divider_style]',
-						'border-top-style',
-						'.et_pb_space:before',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_divider-divider_weight]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_divider-divider_weight]',
-						'border-top-width',
-						'.et_pb_space:before',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_divider-height]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_divider-height]',
-						'height',
-						'.et_pb_space',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_divider-divider_position]', function( value ) {
-				value.bind( function( to ) {
-					$('.customized_et_pb_divider_position').removeClass( function( index, css ){
-						return ( css.match(/\bet_pb_divider_position_\S+/g) || [] ).join(' ');
-					} ).addClass( "et_pb_divider_position_" + to );
-				} );
-			} );
-
-		/* Blog */
-			wp.customize( 'et_divi[et_pb_blog-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_blog-header_font_size]',
-						'font-size',
-						'.et_pb_posts .et_pb_post h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_blog-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_blog-header_font_style]',
-						'font-styles',
-						'.et_pb_posts .et_pb_post h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_blog-meta_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_blog-meta_font_size]',
-						'font-size',
-						'.et_pb_posts .et_pb_post .post-meta',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_blog-meta_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_blog-meta_font_style]',
-						'font-styles',
-						'.et_pb_posts .et_pb_post .post-meta',
-						to
-					);
-				} );
-			} );
-
-		/* Blog Grid */
-			wp.customize( 'et_divi[et_pb_blog_masonry-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_blog_masonry-header_font_size]',
-						'font-size',
-						'.et_pb_blog_grid .et_pb_post h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_blog_masonry-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_blog_masonry-header_font_style]',
-						'font-styles',
-						'.et_pb_blog_grid .et_pb_post h2',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_blog_masonry-meta_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_blog_masonry-meta_font_size]',
-						'font-size',
-						'.et_pb_blog_grid .et_pb_post .post-meta',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_blog_masonry-meta_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_blog_masonry-meta_font_style]',
-						'font-styles',
-						'.et_pb_blog_grid .et_pb_post .post-meta',
-						to
-					);
-				} );
-			} );
-
-		/* Shop */
-			wp.customize( 'et_divi[et_pb_shop-title_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_shop-title_font_size]',
-						'font-size',
-						'.woocommerce ul.products li.product h3, .woocommerce-page ul.products li.product h3',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_shop-title_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_shop-title_font_style]',
-						'font-styles',
-						'.woocommerce ul.products li.product h3, .woocommerce-page ul.products li.product h3',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_shop-sale_badge_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_shop-sale_badge_font_size]',
-						'font-size',
-						'.woocommerce span.onsale, .woocommerce-page span.onsale',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_shop-sale_badge_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_shop-sale_badge_font_style]',
-						'font-styles',
-						'.woocommerce span.onsale, .woocommerce-page span.onsale',
-						to,
-						'use_important'
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_shop-price_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_shop-price_font_size]',
-						'font-size',
-						'.woocommerce ul.products li.product .price .amount, .woocommerce-page ul.products li.product .price .amount',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_shop-price_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_shop-price_font_style]',
-						'font-styles',
-						'.woocommerce ul.products li.product .price .amount, .woocommerce-page ul.products li.product .price .amount',
-						to,
-						'use_important'
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_shop-sale_price_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_shop-sale_price_font_size]',
-						'font-size',
-						'.woocommerce ul.products li.product .price ins .amount, .woocommerce-page ul.products li.product .price ins .amount',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_shop-sale_price_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_shop-sale_price_font_style]',
-						'font-styles',
-						'.woocommerce ul.products li.product .price ins .amount, .woocommerce-page ul.products li.product .price ins .amount',
-						to,
-						'use_important'
-					);
-				} );
-			} );
-
-		/* Countdown */
-			wp.customize( 'et_divi[et_pb_countdown_timer-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_countdown_timer-header_font_size]',
-						'font-size',
-						'.et_pb_countdown_timer .title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_countdown_timer-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_countdown_timer-header_font_style]',
-						'font-styles',
-						'.et_pb_countdown_timer .title',
-						to
-					);
-				} );
-			} );
-
-		/* Social */
-			wp.customize( 'et_divi[et_pb_social_media_follow-button_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_social_media_follow-button_font_style]',
-						'font-styles',
-						'.et_pb_social_media_follow li a.follow_button',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_social_media_follow-icon_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_social_media_follow-icon_size]',
-						'social-icon-size',
-						'',
-						to
-					);
-				} );
-			} );
-
-		/* Fullwidth Slider */
-			wp.customize( 'et_divi[et_pb_fullwidth_slider-header_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_fullwidth_slider-header_font_size]',
-						'font-size',
-						'.et_pb_fullwidth_section .et_pb_slide_description .et_pb_slide_title',
-						to
-					);
-
-					et_fix_slider_height();
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_fullwidth_slider-header_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_fullwidth_slider-header_font_style]',
-						'font-styles',
-						'.et_pb_fullwidth_section .et_pb_slide_description .et_pb_slide_title',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_fullwidth_slider-body_font_size]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_fullwidth_slider-body_font_size]',
-						'font-size',
-						'.et_pb_fullwidth_section .et_pb_slide_content',
-						to
-					);
-
-					et_fix_slider_height();
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_fullwidth_slider-body_font_style]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_fullwidth_slider-body_font_style]',
-						'font-styles',
-						'.et_pb_fullwidth_section .et_pb_slide_content',
-						to
-					);
-				} );
-			} );
-
-			wp.customize( 'et_divi[et_pb_fullwidth_slider-padding]', function( value ) {
-				value.bind( function( to ) {
-					et_print_module_styles_css(
-						'et_divi[et_pb_fullwidth_slider-padding]',
-						'padding-slider',
-						'.et_pb_fullwidth_section .et_pb_slide_description',
-						to
-					);
-
-					et_fix_slider_height();
-				} );
-			} );
-
 	/* Blog Panel */
 		wp.customize( 'et_divi[post_meta_font_size]', function( value ) {
 			value.bind( function( to ) {
@@ -3964,7 +2659,7 @@
 
 	wp.customize( 'et_divi[all_buttons_font_size]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_icon_font_size">body #page-container .et_pb_button{ font-size: ' + to + 'px; } body #page-container .et_pb_button:after, .woocommerce a.button.alt:after, .woocommerce-page a.button.alt:after, .woocommerce button.button.alt:after, .woocommerce-page button.button.alt:after, .woocommerce input.button.alt:after, .woocommerce-page input.button.alt:after, .woocommerce #respond input#submit.alt:after, .woocommerce-page #respond input#submit.alt:after, .woocommerce #content input.button.alt:after, .woocommerce-page #content input.button.alt:after, .woocommerce a.button:after, .woocommerce-page a.button:after, .woocommerce button.button:after, .woocommerce-page button.button:after, .woocommerce input.button:after, .woocommerce-page input.button:after, .woocommerce #respond input#submit:after, .woocommerce-page #respond input#submit:after, .woocommerce #content input.button:after, .woocommerce-page #content input.button:after { font-size:' + parseInt( to ) * 1.6 + 'px; } body.et_button_custom_icon #page-container .et_pb_button:after{ font-size:' + to + 'px; } </style>',
+			var	$button_style = '<style id="buttons_icon_font_size">body #page-container .et_pb_button, ' + css('.et_pb_button') + '{ font-size: ' + to + 'px; } body #page-container .et_pb_button:after, ' + css('.et_pb_button:after') + ', .woocommerce a.button.alt:after, .woocommerce-page a.button.alt:after, .woocommerce button.button.alt:after, .woocommerce-page button.button.alt:after, .woocommerce input.button.alt:after, .woocommerce-page input.button.alt:after, .woocommerce #respond input#submit.alt:after, .woocommerce-page #respond input#submit.alt:after, .woocommerce #content input.button.alt:after, .woocommerce-page #content input.button.alt:after, .woocommerce a.button:after, .woocommerce-page a.button:after, .woocommerce button.button:after, .woocommerce-page button.button:after, .woocommerce input.button:after, .woocommerce-page input.button:after, .woocommerce #respond input#submit:after, .woocommerce-page #respond input#submit:after, .woocommerce #content input.button:after, .woocommerce-page #content input.button:after { font-size:' + parseInt( to ) * 1.6 + 'px; } body.et_button_custom_icon #page-container .et_pb_button:after, body.et_button_custom_icon.' + css('.et_pb_button:after') + ' { font-size:' + to + 'px; } </style>',
 				style_id = 'style#buttons_icon_font_size';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -3973,11 +2668,15 @@
 
 	wp.customize( 'et_divi[all_buttons_text_color]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = "<style id='buttons_text_color'> body.et_pb_button_helper_class #page-container .et_pb_button,\
-									.woocommerce.et_pb_button_helper_class a.button.alt, .woocommerce-page.et_pb_button_helper_class a.button.alt, .woocommerce.et_pb_button_helper_class button.button.alt, .woocommerce-page.et_pb_button_helper_class button.button.alt, .woocommerce.et_pb_button_helper_class input.button.alt, .woocommerce-page.et_pb_button_helper_class input.button.alt, .woocommerce.et_pb_button_helper_class #respond input#submit.alt, .woocommerce-page.et_pb_button_helper_class #respond input#submit.alt, .woocommerce.et_pb_button_helper_class #content input.button.alt, .woocommerce-page.et_pb_button_helper_class #content input.button.alt,\
+			var	$button_style = "<style id='buttons_text_color'> body.et_pb_button_helper_class #page-container .et_pb_button, body.et_pb_button_helper_class " + css('.et_pb_button') + ", \
+									.woocommerce.et_pb_button_helper_class a.button.alt, .woocommerce-page.et_pb_button_helper_class a.button.alt, .woocommerce.et_pb_button_helper_class button.button.alt, .woocommerce.et_pb_button_helper_class button.button.alt.disabled, .woocommerce-page.et_pb_button_helper_class button.button.alt, .woocommerce-page.et_pb_button_helper_class button.button.alt.disabled, .woocommerce.et_pb_button_helper_class input.button.alt, .woocommerce-page.et_pb_button_helper_class input.button.alt, .woocommerce.et_pb_button_helper_class #respond input#submit.alt, .woocommerce-page.et_pb_button_helper_class #respond input#submit.alt, .woocommerce.et_pb_button_helper_class #content input.button.alt, .woocommerce-page.et_pb_button_helper_class #content input.button.alt,\
 									.woocommerce.et_pb_button_helper_class a.button, .woocommerce-page.et_pb_button_helper_class a.button, .woocommerce.et_pb_button_helper_class button.button, .woocommerce-page.et_pb_button_helper_class button.button, .woocommerce.et_pb_button_helper_class input.button, .woocommerce-page.et_pb_button_helper_class input.button, .woocommerce.et_pb_button_helper_class #respond input#submit, .woocommerce-page.et_pb_button_helper_class #respond input#submit, .woocommerce.et_pb_button_helper_class #content input.button, .woocommerce-page.et_pb_button_helper_class #content input.button { color:" + to + ";}\
 								</style>",
 				style_id = 'style#buttons_text_color';
+
+			if ( ! to ) {
+				$style_content = '';
+			}
 
 			et_customizer_update_styles( style_id, $button_style );
 		} );
@@ -3985,7 +2684,7 @@
 
 	wp.customize( 'et_divi[all_buttons_bg_color]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_bg_color">body #page-container .et_pb_button, .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce-page button.button.alt, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { background:' + to + ';}</style>',
+			var	$button_style = '<style id="buttons_bg_color">body #page-container .et_pb_button, body ' + css('.et_pb_button') + ', .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce button.button.alt.disabled, .woocommerce-page button.button.alt, .woocommerce-page button.button.alt.disabled, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { background:' + to + ';}</style>',
 				style_id = 'style#buttons_bg_color';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -3994,7 +2693,7 @@
 
 	wp.customize( 'et_divi[all_buttons_border_width]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_border_width">body #page-container .et_pb_button, .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce-page button.button.alt, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { border-width:' + to + 'px !important; }</style>',
+			var	$button_style = '<style id="buttons_border_width">body #page-container .et_pb_button, body ' + css('.et_pb_button') + ', .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce button.button.alt.disabled, .woocommerce-page button.button.alt, .woocommerce-page button.button.alt.disabled, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { border-width:' + to + 'px !important; }</style>',
 				style_id = 'style#buttons_border_width';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4003,7 +2702,7 @@
 
 	wp.customize( 'et_divi[all_buttons_border_color]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_border_color">body #page-container .et_pb_button, .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce-page button.button.alt, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { border-color:' + to + ';}</style>',
+			var	$button_style = '<style id="buttons_border_color">body #page-container .et_pb_button, body ' + css('.et_pb_button') + ', .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce button.button.alt.disabled, .woocommerce-page button.button.alt, .woocommerce-page button.button.alt.disabled, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { border-color:' + to + ';}</style>',
 				style_id = 'style#buttons_border_color';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4012,7 +2711,7 @@
 
 	wp.customize( 'et_divi[all_buttons_border_radius]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_border_radius">body #page-container .et_pb_button, .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce-page button.button.alt, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { border-radius:' + to + 'px;}</style>',
+			var	$button_style = '<style id="buttons_border_radius">body #page-container .et_pb_button, body ' + css('.et_pb_button') + ', .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce button.button.alt.disabled, .woocommerce-page button.button.alt, .woocommerce-page button.button.alt.disabled, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { border-radius:' + to + 'px;}</style>',
 				style_id = 'style#buttons_border_radius';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4022,7 +2721,7 @@
 	wp.customize( 'et_divi[all_buttons_font_style]', function( value ) {
 		value.bind( function( to ) {
 			var styles = et_set_font_styles( to, '' ),
-				$button_style = '<style id="buttons_font_style">body #page-container .et_pb_button, .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce-page button.button.alt, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button {' + styles + '}</style>',
+				$button_style = '<style id="buttons_font_style">body #page-container .et_pb_button, body ' + css('.et_pb_button') + ', .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce button.button.alt.disabled, .woocommerce-page button.button.alt, .woocommerce-page button.button.alt.disabled, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button {' + styles + '}</style>',
 				style_id = 'style#buttons_font_style';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4056,7 +2755,7 @@
 	wp.customize( 'et_divi[body_header_style]', function( value ) {
 		value.bind( function( to ) {
 			var styles = et_set_font_styles( to, '' ),
-				$button_style = '<style id="body_header_style"> h1, h2, h3, h4, h5, h6, .et_quote_content blockquote p, .et_pb_slide_description .et_pb_slide_title {' + styles + '}</style>',
+				$button_style = '<style id="body_header_style"> h1, h2, h3, h4, h5, h6, ' + css('h1, h2, h3, h4, h5, h6, .et_quote_content blockquote p, .et_pb_slide_description .et_pb_slide_title') + ' {' + styles + '}</style>',
 				style_id = 'style#body_header_style';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4066,7 +2765,7 @@
 	wp.customize( 'et_divi[all_buttons_selected_icon]', function( value ) {
 		value.bind( function( to ) {
 			var	button_font_size = $( '.et_pb_button' ).css( 'font-size' ),
-				$button_style = "<style id='buttons_icon'>body #page-container .et_pb_button:after, .woocommerce a.button.alt:after, .woocommerce-page a.button.alt:after, .woocommerce button.button.alt:after, .woocommerce-page button.button.alt:after, .woocommerce input.button.alt:after, .woocommerce-page input.button.alt:after, .woocommerce #respond input#submit.alt:after, .woocommerce-page #respond input#submit.alt:after, .woocommerce #content input.button.alt:after, .woocommerce-page #content input.button.alt:after, .woocommerce a.button:after, .woocommerce-page a.button:after, .woocommerce button.button:after, .woocommerce-page button.button:after, .woocommerce input.button:after, .woocommerce-page input.button:after, .woocommerce #respond input#submit:after, .woocommerce-page #respond input#submit:after, .woocommerce #content input.button:after, .woocommerce-page #content input.button:after { font-size:" + button_font_size + ";",
+				$button_style = "<style id='buttons_icon'>body #page-container .et_pb_button:after, body " + css('.et_pb_button:after') + ", .woocommerce a.button.alt:after, .woocommerce-page a.button.alt:after, .woocommerce button.button.alt:after, .woocommerce-page button.button.alt:after, .woocommerce input.button.alt:after, .woocommerce-page input.button.alt:after, .woocommerce #respond input#submit.alt:after, .woocommerce-page #respond input#submit.alt:after, .woocommerce #content input.button.alt:after, .woocommerce-page #content input.button.alt:after, .woocommerce a.button:after, .woocommerce-page a.button:after, .woocommerce button.button:after, .woocommerce-page button.button:after, .woocommerce input.button:after, .woocommerce-page input.button:after, .woocommerce #respond input#submit:after, .woocommerce-page #respond input#submit:after, .woocommerce #content input.button:after, .woocommerce-page #content input.button:after { font-size:" + button_font_size + ";",
 				style_id = 'style#buttons_icon';
 
 			if ( "'" === to ) {
@@ -4091,7 +2790,7 @@
 
 	wp.customize( 'et_divi[all_buttons_icon_color]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_icon_color">body #page-container .et_pb_button:after, .woocommerce a.button.alt:after, .woocommerce-page a.button.alt:after, .woocommerce button.button.alt:after, .woocommerce-page button.button.alt:after, .woocommerce input.button.alt:after, .woocommerce-page input.button.alt:after, .woocommerce #respond input#submit.alt:after, .woocommerce-page #respond input#submit.alt:after, .woocommerce #content input.button.alt:after, .woocommerce-page #content input.button.alt:after, .woocommerce a.button:after, .woocommerce-page a.button:after, .woocommerce button.button:after, .woocommerce-page button.button:after, .woocommerce input.button:after, .woocommerce-page input.button:after, .woocommerce #respond input#submit:after, .woocommerce-page #respond input#submit:after, .woocommerce #content input.button:after, .woocommerce-page #content input.button:after { color:' + to + ';}</style>',
+			var	$button_style = '<style id="buttons_icon_color">body #page-container .et_pb_button:after, body ' + css('.et_pb_button:after') + ', .woocommerce a.button.alt:after, .woocommerce-page a.button.alt:after, .woocommerce button.button.alt:after, .woocommerce-page button.button.alt:after, .woocommerce input.button.alt:after, .woocommerce-page input.button.alt:after, .woocommerce #respond input#submit.alt:after, .woocommerce-page #respond input#submit.alt:after, .woocommerce #content input.button.alt:after, .woocommerce-page #content input.button.alt:after, .woocommerce a.button:after, .woocommerce-page a.button:after, .woocommerce button.button:after, .woocommerce-page button.button:after, .woocommerce input.button:after, .woocommerce-page input.button:after, .woocommerce #respond input#submit:after, .woocommerce-page #respond input#submit:after, .woocommerce #content input.button:after, .woocommerce-page #content input.button:after { color:' + to + ';}</style>',
 				style_id = 'style#buttons_icon_color';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4128,10 +2827,16 @@
 		} );
 	} );
 
+	var buttons_hover_selector = 'body #page-container .et_pb_button:hover, body ' + css('.et_pb_button:hover') + ', .woocommerce a.button.alt:hover, .woocommerce-page a.button.alt:hover, .woocommerce button.button.alt:hover, .woocommerce button.button.alt.disabled:hover, .woocommerce-page button.button.alt:hover, .woocommerce-page button.button.alt.disabled:hover, .woocommerce input.button.alt:hover, .woocommerce-page input.button.alt:hover, .woocommerce #respond input#submit.alt:hover, .woocommerce-page #respond input#submit.alt:hover, .woocommerce #content input.button.alt:hover, .woocommerce-page #content input.button.alt:hover, .woocommerce a.button:hover, .woocommerce-page a.button:hover, .woocommerce button.button:hover, .woocommerce-page button.button:hover, .woocommerce input.button:hover, .woocommerce-page input.button:hover, .woocommerce #respond input#submit:hover, .woocommerce-page #respond input#submit:hover, .woocommerce #content input.button:hover, .woocommerce-page #content input.button:hover';
+
 	wp.customize( 'et_divi[all_buttons_text_color_hover]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_text_color_hover">body #page-container .et_pb_button:hover, .woocommerce a.button.alt:hover, .woocommerce-page a.button.alt:hover, .woocommerce button.button.alt:hover, .woocommerce-page button.button.alt:hover, .woocommerce input.button.alt:hover, .woocommerce-page input.button.alt:hover, .woocommerce #respond input#submit.alt:hover, .woocommerce-page #respond input#submit.alt:hover, .woocommerce #content input.button.alt:hover, .woocommerce-page #content input.button.alt:hover, .woocommerce a.button:hover, .woocommerce-page a.button:hover, .woocommerce button.button:hover, .woocommerce-page button.button:hover, .woocommerce input.button:hover, .woocommerce-page input.button:hover, .woocommerce #respond input#submit:hover, .woocommerce-page #respond input#submit:hover, .woocommerce #content input.button:hover, .woocommerce-page #content input.button:hover { color: ' + to + ' !important; } </style>',
+			var	$button_style = '<style id="buttons_text_color_hover">' + buttons_hover_selector + ' { color: ' + to + ' !important; } </style>',
 				style_id = 'style#buttons_text_color_hover';
+			
+			if ( ! to ) {
+				$button_style = '';
+			}
 
 			et_customizer_update_styles( style_id, $button_style );
 		} );
@@ -4139,7 +2844,7 @@
 
 	wp.customize( 'et_divi[all_buttons_bg_color_hover]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_bg_color_hover">body #page-container .et_pb_button:hover, .woocommerce a.button.alt:hover, .woocommerce-page a.button.alt:hover, .woocommerce button.button.alt:hover, .woocommerce-page button.button.alt:hover, .woocommerce input.button.alt:hover, .woocommerce-page input.button.alt:hover, .woocommerce #respond input#submit.alt:hover, .woocommerce-page #respond input#submit.alt:hover, .woocommerce #content input.button.alt:hover, .woocommerce-page #content input.button.alt:hover, .woocommerce a.button:hover, .woocommerce-page a.button:hover, .woocommerce button.button, .woocommerce-page button.button:hover, .woocommerce input.button:hover, .woocommerce-page input.button:hover, .woocommerce #respond input#submit:hover, .woocommerce-page #respond input#submit:hover, .woocommerce #content input.button:hover, .woocommerce-page #content input.button:hover { background: ' + to + ' !important; } </style>',
+			var	$button_style = '<style id="buttons_bg_color_hover">' + buttons_hover_selector + ' { background: ' + to + ' !important; } </style>',
 				style_id = 'style#buttons_bg_color_hover';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4148,7 +2853,7 @@
 
 	wp.customize( 'et_divi[all_buttons_border_color_hover]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_border_color_hover">body #page-container .et_pb_button:hover, .woocommerce a.button.alt:hover, .woocommerce-page a.button.alt:hover, .woocommerce button.button.alt:hover, .woocommerce-page button.button.alt:hover, .woocommerce input.button.alt:hover, .woocommerce-page input.button.alt:hover, .woocommerce #respond input#submit.alt:hover, .woocommerce-page #respond input#submit.alt:hover, .woocommerce #content input.button.alt:hover, .woocommerce-page #content input.button.alt:hover, .woocommerce a.button:hover, .woocommerce-page a.button:hover, .woocommerce button.button, .woocommerce-page button.button:hover, .woocommerce input.button:hover, .woocommerce-page input.button:hover, .woocommerce #respond input#submit:hover, .woocommerce-page #respond input#submit:hover, .woocommerce #content input.button:hover, .woocommerce-page #content input.button:hover { border-color: ' + to + ' !important; } </style>',
+			var	$button_style = '<style id="buttons_border_color_hover">' + buttons_hover_selector + ' { border-color: ' + to + ' !important; } </style>',
 				style_id = 'style#buttons_border_color_hover';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4157,7 +2862,7 @@
 
 	wp.customize( 'et_divi[all_buttons_border_radius_hover]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_border_radius_hover">body #page-container .et_pb_button:hover, .woocommerce a.button.alt:hover, .woocommerce-page a.button.alt:hover, .woocommerce button.button.alt:hover, .woocommerce-page button.button.alt:hover, .woocommerce input.button.alt:hover, .woocommerce-page input.button.alt:hover, .woocommerce #respond input#submit.alt:hover, .woocommerce-page #respond input#submit.alt:hover, .woocommerce #content input.button.alt:hover, .woocommerce-page #content input.button.alt:hover, .woocommerce a.button:hover, .woocommerce-page a.button:hover, .woocommerce button.button, .woocommerce-page button.button:hover, .woocommerce input.button:hover, .woocommerce-page input.button:hover, .woocommerce #respond input#submit:hover, .woocommerce-page #respond input#submit:hover, .woocommerce #content input.button:hover, .woocommerce-page #content input.button:hover { border-radius: ' + to + 'px !important; } </style>',
+			var	$button_style = '<style id="buttons_border_radius_hover">' + buttons_hover_selector + ' { border-radius: ' + to + 'px !important; } </style>',
 				style_id = 'style#buttons_border_radius_hover';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4166,7 +2871,7 @@
 
 	wp.customize( 'et_divi[all_buttons_spacing]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_spacing">body #page-container .et_pb_button, .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce-page button.button.alt, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { letter-spacing: ' + to + 'px; } </style>',
+			var	$button_style = '<style id="buttons_spacing">body #page-container .et_pb_button, body ' + css('.et_pb_button') + ', .woocommerce a.button.alt, .woocommerce-page a.button.alt, .woocommerce button.button.alt, .woocommerce button.button.alt.disabled, .woocommerce-page button.button.alt, .woocommerce-page button.button.alt.disabled, .woocommerce input.button.alt, .woocommerce-page input.button.alt, .woocommerce #respond input#submit.alt, .woocommerce-page #respond input#submit.alt, .woocommerce #content input.button.alt, .woocommerce-page #content input.button.alt, .woocommerce a.button, .woocommerce-page a.button, .woocommerce button.button, .woocommerce-page button.button, .woocommerce input.button, .woocommerce-page input.button, .woocommerce #respond input#submit, .woocommerce-page #respond input#submit, .woocommerce #content input.button, .woocommerce-page #content input.button { letter-spacing: ' + to + 'px; } </style>',
 				style_id = 'style#buttons_spacing';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4175,7 +2880,7 @@
 
 	wp.customize( 'et_divi[all_buttons_spacing_hover]', function( value ) {
 		value.bind( function( to ) {
-			var	$button_style = '<style id="buttons_spacing_hover">body #page-container .et_pb_button:hover, .woocommerce a.button.alt:hover, .woocommerce-page a.button.alt:hover, .woocommerce button.button.alt:hover, .woocommerce-page button.button.alt:hover, .woocommerce input.button.alt:hover, .woocommerce-page input.button.alt:hover, .woocommerce #respond input#submit.alt:hover, .woocommerce-page #respond input#submit.alt:hover, .woocommerce #content input.button.alt:hover, .woocommerce-page #content input.button.alt:hover, .woocommerce a.button:hover, .woocommerce-page a.button:hover, .woocommerce button.button, .woocommerce-page button.button:hover, .woocommerce input.button:hover, .woocommerce-page input.button:hover, .woocommerce #respond input#submit:hover, .woocommerce-page #respond input#submit:hover, .woocommerce #content input.button:hover, .woocommerce-page #content input.button:hover { letter-spacing: ' + to + 'px; } </style>',
+			var	$button_style = '<style id="buttons_spacing_hover">' + buttons_hover_selector + ' { letter-spacing: ' + to + 'px; } </style>',
 				style_id = 'style#buttons_spacing_hover';
 
 			et_customizer_update_styles( style_id, $button_style );
@@ -4360,5 +3065,16 @@
 			et_customizer_update_styles( style_id, $style_content );
 		} );
 	} );
+
+  wp.customize.bind( 'ready', function() {
+    wp.customize.previewer.bind( 'et-load', function( data ) {
+      console.log('Data from preview window: ', data);
+    } );
+  } );
+
+  $(document).on('et-customizer-preview-load', function(e, data) {
+  	isCustomPostType = data.isCustomPostType;
+  	selectorWrapper  = data.selectorWrapper;
+	});
 
 } )( jQuery );

@@ -1,11 +1,11 @@
 (function($){
 	// Turn of all hrefs which point to another page
-	$('body').on( 'click', 'a', function( event ){
-		var href  = $(this).attr( 'href'),
-			start = href.substr( 0, 1 );
+	$('body').on('click', 'a', function(event) {
+		var href  = $(this).attr('href');
+		var start = typeof href !== 'undefined' ? href.substr(0, 1) : '';
 
 		// Stop the link if it points to another URL
-		if ( start !== '#' && start !== '' ) {
+		if (start !== '#' && start !== '') {
 			event.preventDefault();
 
 			// Display notification
@@ -35,6 +35,11 @@
 		// IE9 below fix. They have postMessage, but it has to be in string
 		if ( typeof msie !== 'undefined' && msie < 10 ) {
 			data = JSON.parse( data );
+		}
+
+		// Ignore messages not coming from the builder.
+		if (!data || !data.et_pb_preview_nonce) {
+			return;
 		}
 
 		// Loop postMessage data and append it to $form

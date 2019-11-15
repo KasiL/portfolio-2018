@@ -3,31 +3,13 @@
 class ET_Builder_Module_Audio extends ET_Builder_Module {
 	function init() {
 		$this->name       = esc_html__( 'Audio', 'et_builder' );
+		$this->plural     = esc_html__( 'Audios', 'et_builder' );
 		$this->slug       = 'et_pb_audio';
-		$this->fb_support = true;
-
-		$this->whitelisted_fields = array(
-			'audio',
-			'title',
-			'artist_name',
-			'album_name',
-			'image_url',
-			'background_color',
-			'background_layout',
-			'admin_label',
-			'module_id',
-			'module_class',
-		);
-
-		$this->fields_defaults = array(
-			'background_color'  => array( et_builder_accent_color(), 'add_default_setting' ),
-			'background_layout' => array( 'dark' ),
-			'text_orientation'  => array( 'center' ),
-		);
+		$this->vb_support = 'on';
 
 		$this->main_css_element = '%%order_class%%.et_pb_audio_module';
 
-		$this->options_toggles = array(
+		$this->settings_modal_toggles = array(
 			'general'  => array(
 				'toggles' => array(
 					'main_content' => esc_html__( 'Text', 'et_builder' ),
@@ -37,20 +19,18 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 			),
 			'advanced' => array(
 				'toggles' => array(
-					'text' => array(
-						'title'    => esc_html__( 'Text', 'et_builder' ),
-						'priority' => 49,
-					),
 					'image' => array(
 						'title' => esc_html__( 'Image', 'et_builder' ),
-						'priority' => 51,
+					),
+					'text'  => array(
+						'title' => esc_html__( 'Text', 'et_builder' ),
 					),
 				),
 			),
 		);
 
-		$this->advanced_options = array(
-			'fonts' => array(
+		$this->advanced_fields = array(
+			'fonts'                 => array(
 				'title' => array(
 					'label'    => esc_html__( 'Title', 'et_builder' ),
 					'css'      => array(
@@ -66,36 +46,86 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 					'css'      => array(
 						'line_height' => "{$this->main_css_element} p",
 						'main' => "{$this->main_css_element} p",
-						'plugin_main' => "{$this->main_css_element} p, {$this->main_css_element} p strong",
+						'limited_main' => "{$this->main_css_element} p, {$this->main_css_element} p strong",
 					),
 				),
 			),
-			'background' => array(
+			'background'            => array(
 				'settings' => array(
 					'color' => 'alpha',
 				),
 				'css' => array(
 					'important' => true,
 				),
+				'options' => array(
+					'background_color' => array(
+						'default' => et_builder_accent_color(),
+					),
+				),
 			),
-			'custom_margin_padding' => array(
+			'borders'               => array(
+				'default' => array(),
+				'image'   => array(
+					'css'          => array(
+						'main' => array(
+							'border_radii'  => '%%order_class%% .et_pb_audio_cover_art',
+							'border_styles' => '%%order_class%% .et_pb_audio_cover_art',
+						)
+					),
+					'label_prefix' => esc_html__( 'Image', 'et_builder' ),
+					'tab_slug'     => 'advanced',
+					'toggle_slug'  => 'image',
+				),
+			),
+			'box_shadow'            => array(
+				'default' => array(
+					'css' => array(
+						'overlay' => 'inset',
+					),
+				),
+				'image'   => array(
+					'label'             => esc_html__( 'Image Box Shadow', 'et_builder' ),
+					'option_category'   => 'layout',
+					'tab_slug'          => 'advanced',
+					'toggle_slug'       => 'image',
+					'css'               => array(
+						'main'    => '%%order_class%% .et_pb_audio_cover_art',
+						'overlay' => 'inset',
+					),
+					'default_on_fronts' => array(
+						'color'    => '',
+						'position' => '',
+					),
+				),
+			),
+			'margin_padding' => array(
 				'css' => array(
 					'important' => 'all',
 					'padding' => '.et_pb_column %%order_class%% .et_pb_audio_module_content',
 				),
 			),
-			'max_width' => array(
+			'max_width'             => array(
 				'css' => array(
 					'module_alignment' => '%%order_class%%.et_pb_audio_module.et_pb_module',
 				),
 			),
-			'text'      => array(
+			'text'                  => array(
+				'use_background_layout' => true,
 				'css' => array(
 					'text_orientation' => '%%order_class%% .et_pb_audio_module_content',
 					'text_shadow'      => '%%order_class%% .et_pb_audio_module_content',
 				),
+				'options' => array(
+					'text_orientation'  => array(
+						'default_on_front' => 'center',
+					),
+					'background_layout' => array(
+						'default_on_front' => 'dark',
+						'hover' => 'tabs',
+					),
+				),
 			),
-			'filters' => array(
+			'filters'               => array(
 				'css' => array(
 					'main' => '%%order_class%%',
 				),
@@ -104,13 +134,15 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 					'toggle_slug' => 'image',
 				),
 			),
-			'image' => array(
+			'image'                 => array(
 				'css' => array(
 					'main' => '%%order_class%% .et_pb_audio_cover_art',
 				),
 			),
+			'button'                => false,
 		);
-		$this->custom_css_options = array(
+
+		$this->custom_css_fields = array(
 			'audio_cover_art' => array(
 				'label'    => esc_html__( 'Audio Cover Art', 'et_builder' ),
 				'selector' => '.et_pb_audio_cover_art',
@@ -133,7 +165,7 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 			),
 			'audio_timer' => array(
 				'label'    => esc_html__( 'Player Timer', 'et_builder' ),
-				'selector' => '.mejs-time.mejs-currenttime-container.custom',
+				'selector' => '.mejs-time.mejs-duration-container .mejs-duration',
 			),
 			'audio_sliders' => array(
 				'label'    => esc_html__( 'Player Sliders', 'et_builder' ),
@@ -144,12 +176,57 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 				'selector' => "{$this->main_css_element} .et_audio_container .mejs-controls .mejs-time-rail .mejs-time-current,{$this->main_css_element} .et_audio_container .mejs-controls .mejs-time-rail .mejs-time-handle,{$this->main_css_element} .et_audio_container .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current,{$this->main_css_element} .et_audio_container .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle",
 			),
 		);
+
+		$this->help_videos = array(
+			array(
+				'id'   => esc_html( '3bg1qUaSZ5I' ),
+				'name' => esc_html__( 'An introduction to the Audio Player module', 'et_builder' ),
+			),
+		);
+	}
+
+	public function get_transition_fields_css_props() {
+		$title     = "{$this->main_css_element} .et_pb_module_header";
+		$meta      = "{$this->main_css_element} .et_audio_module_meta";
+		$container = "{$this->main_css_element} .et_audio_container";
+
+		$fields                      = parent::get_transition_fields_css_props();
+		$fields['background_layout'] = array(
+			'color'            => implode( ', ',
+				array(
+					$title,
+					$meta,
+					"{$container} .mejs-playpause-button button:before",
+					"{$container} .mejs-volume-button button:before",
+					"{$container} .mejs-container .mejs-controls .mejs-time span",
+				) ),
+			'background-color' => implode( ', ',
+				array(
+					$title,
+					"{$container} .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total",
+					"{$container} .mejs-controls .mejs-time-rail .mejs-time-total",
+					"{$container} .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current",
+					"{$container} .mejs-controls .mejs-time-rail .mejs-time-current",
+					"{$container} .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle",
+				) ),
+
+		);
+		$fields['text_shadow_style']         = array(
+			'text-shadow' => implode( ', ',
+				array(
+					$title,
+					$meta,
+					"{$this->main_css_element} .et_audio_container .mejs-container .mejs-controls .mejs-time span",
+				) ),
+		);
+
+		return $fields;
 	}
 
 	function get_fields() {
 		$fields = array(
 			'audio' => array(
-				'label'              => esc_html__( 'Audio', 'et_builder' ),
+				'label'              => esc_html__( 'Audio File', 'et_builder' ),
 				'type'               => 'upload',
 				'option_category'    => 'basic_option',
 				'data_type'          => 'audio',
@@ -168,23 +245,32 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 				'option_category' => 'basic_option',
 				'description'     => esc_html__( 'Define a title.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
+				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'artist_name' => array(
-				'label'           => esc_html__( 'Artist Name', 'et_builder' ),
+				'label'           => esc_html__( 'Artist', 'et_builder' ),
 				'type'            => 'text',
 				'option_category' => 'basic_option',
 				'description'     => esc_html__( 'Define an artist name.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
+				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'album_name' => array(
-				'label'           => esc_html__( 'Album name', 'et_builder' ),
+				'label'           => esc_html__( 'Album', 'et_builder' ),
 				'type'            => 'text',
 				'option_category' => 'basic_option',
 				'description'     => esc_html__( 'Define an album name.', 'et_builder' ),
 				'toggle_slug'     => 'main_content',
+				'dynamic_content' => 'text',
+				'mobile_options'  => true,
+				'hover'           => 'tabs',
 			),
 			'image_url' => array(
-				'label'              => esc_html__( 'Cover Art Image URL', 'et_builder' ),
+				'label'              => esc_html__( 'Image', 'et_builder' ),
 				'type'               => 'upload',
 				'option_category'    => 'basic_option',
 				'upload_button_text' => esc_attr__( 'Upload an image', 'et_builder' ),
@@ -195,60 +281,9 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 				'computed_affects'   => array(
 					'__audio',
 				),
-			),
-			'background_color' => array(
-				'label'             => esc_html__( 'Background Color', 'et_builder' ),
-				'type'              => 'color-alpha',
-				'toggle_slug'       => 'background',
-				'description'       => esc_html__( 'Define a custom background color for your module, or leave blank to use the default color.', 'et_builder' ),
-			),
-			'background_layout' => array(
-				'label'             => esc_html__( 'Text Color', 'et_builder' ),
-				'type'              => 'select',
-				'option_category'   => 'color_option',
-				'options'           => array(
-					'dark'  => esc_html__( 'Light', 'et_builder' ),
-					'light' => esc_html__( 'Dark', 'et_builder' ),
-				),
-				'tab_slug'          => 'advanced',
-				'toggle_slug'       => 'text',
-				'description'       => esc_html__( 'Here you can choose whether your text should be light or dark. If you are working with a dark background, then your text should be light. If your background is light, then your text should be set to dark.', 'et_builder' ),
-			),
-			'disabled_on' => array(
-				'label'           => esc_html__( 'Disable on', 'et_builder' ),
-				'type'            => 'multiple_checkboxes',
-				'options'         => array(
-					'phone'   => esc_html__( 'Phone', 'et_builder' ),
-					'tablet'  => esc_html__( 'Tablet', 'et_builder' ),
-					'desktop' => esc_html__( 'Desktop', 'et_builder' ),
-				),
-				'additional_att'  => 'disable_on',
-				'option_category' => 'configuration',
-				'description'     => esc_html__( 'This will disable the module on selected devices', 'et_builder' ),
-				'tab_slug'        => 'custom_css',
-				'toggle_slug'     => 'visibility',
-			),
-			'admin_label' => array(
-				'label'       => esc_html__( 'Admin Label', 'et_builder' ),
-				'type'        => 'text',
-				'description' => esc_html__( 'This will change the label of the module in the builder for easy identification.', 'et_builder' ),
-				'toggle_slug' => 'admin_label',
-			),
-			'module_id' => array(
-				'label'           => esc_html__( 'CSS ID', 'et_builder' ),
-				'type'            => 'text',
-				'option_category' => 'configuration',
-				'tab_slug'        => 'custom_css',
-				'toggle_slug'     => 'classes',
-				'option_class'    => 'et_pb_custom_css_regular',
-			),
-			'module_class' => array(
-				'label'           => esc_html__( 'CSS Class', 'et_builder' ),
-				'type'            => 'text',
-				'option_category' => 'configuration',
-				'tab_slug'        => 'custom_css',
-				'toggle_slug'     => 'classes',
-				'option_class'    => 'et_pb_custom_css_regular',
+				'dynamic_content'    => 'image',
+				'mobile_options'     => true,
+				'hover'              => 'tabs',
 			),
 			'__audio' => array(
 				'type'                => 'computed',
@@ -280,57 +315,77 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 		return do_shortcode( sprintf( '[audio src="%s" /]', $args['audio'] ) );
 	}
 
-	function shortcode_callback( $atts, $content = null, $function_name ) {
+	function render( $attrs, $content = null, $render_slug ) {
 		global $wp_version;
-		$module_id         = $this->shortcode_atts['module_id'];
-		$module_class      = $this->shortcode_atts['module_class'];
-		$audio             = $this->shortcode_atts['audio'];
-		$title             = $this->shortcode_atts['title'];
-		$artist_name       = $this->shortcode_atts['artist_name'];
-		$album_name        = $this->shortcode_atts['album_name'];
-		$image_url         = $this->shortcode_atts['image_url'];
-		$background_color  = '' !== $this->shortcode_atts['background_color'] ? $this->shortcode_atts['background_color'] : $this->fields_defaults['background_color'][0];
-		$background_layout = $this->shortcode_atts['background_layout'];
-		$header_level      = $this->shortcode_atts['title_level'];
-		$wp_48_or_lower    = version_compare( $wp_version, '4.9' ) === -1 ? 'et_pb_audio_legacy' : '';
 
-		$module_class = ET_Builder_Element::add_module_order_class( $module_class, $function_name );
+		$multi_view                      = et_pb_multi_view_options( $this );
+		$audio                           = $this->props['audio'];
+		$title                           = $multi_view->render_element( array(
+			'tag'     => et_pb_process_header_level( $this->props['title_level'], 'h2' ),
+			'content' => '{{title}}',
+			'attrs'   => array(
+				'class' => 'et_pb_module_header',
+			),
+		) );
+		$artist_name                     = $this->_esc_attr( 'artist_name' );
+		$album_name                      = $this->_esc_attr( 'album_name' );
+		$image_url                       = $multi_view->render_element( array(
+			'tag'      => 'div',
+			'styles'   => array(
+				'background-image' => 'url({{image_url}})',
+			),
+			'classes'  => array(
+				'et_pb_audio_cover_art' => array(
+					'image_url' => '__not_empty',
+				),
+			),
+			'required' => 'image_url',
+		) );
+		$background_layout               = $this->props['background_layout'];
+		$background_layout_hover         = et_pb_hover_options()->get_value( 'background_layout', $this->props, 'light' );
+		$background_layout_values        = et_pb_responsive_options()->get_property_values( $this->props, 'background_layout' );
 
-		$meta = $cover_art = '';
-		$class = " et_pb_module et_pb_bg_layout_{$background_layout}";
+		$data_background_layout       = '';
+		$data_background_layout_hover = '';
 
-		if ( 'light' === $background_layout ) {
-			$class .= ' et_pb_text_color_dark';
-		}
-
-		if ( '' !== $artist_name || '' !== $album_name ) {
-			if ( '' !== $artist_name && '' !== $album_name ) {
-				$album_name = ' | ' . $album_name;
-			}
-
-			if ( '' !== $artist_name ) {
-				$artist_name = sprintf(
-					et_get_safe_localization( _x( 'by <strong>%1$s</strong>', 'Audio Module meta information', 'et_builder' ) ),
-					esc_html( $artist_name )
-				);
-			}
-
-			$meta = sprintf( '%1$s%2$s',
-				$artist_name,
-				esc_html( $album_name )
+		if ( et_pb_hover_options()->is_enabled( 'background_layout', $this->props ) ) {
+			$data_background_layout = sprintf(
+				' data-background-layout="%1$s"',
+				esc_attr( $background_layout )
 			);
-
-			$meta = sprintf( '<p class="et_audio_module_meta">%1$s</p>', $meta );
-		}
-
-		if ( '' !== $image_url ) {
-			$cover_art = sprintf(
-				'<div class="et_pb_audio_cover_art" style="background-image: url(%1$s);">
-				</div>',
-				esc_attr( $image_url )
+			$data_background_layout_hover = sprintf(
+				' data-background-layout-hover="%1$s"',
+				esc_attr( $background_layout_hover )
 			);
 		}
-		$video_background = $this->video_background();
+
+		$meta  = '';
+		$metas = array();
+
+		$artist_name = $multi_view->render_element( array(
+			'tag'     => 'strong',
+			'content' => '{{artist_name}}',
+		) );
+
+		if ( $artist_name ) {
+			$metas[] = sprintf(
+				et_get_safe_localization( _x( 'by %1$s', 'Audio Module meta information', 'et_builder' ) ),
+				et_core_esc_previously( $artist_name )
+			);
+		}
+
+		$album_name = $multi_view->render_element( array(
+			'content' => '{{album_name}}',
+		) );
+
+		if ( $album_name ) {
+			$metas[] = $album_name;
+		}
+
+		if ( $metas ) {
+			$meta = sprintf( '<p class="et_audio_module_meta">%1$s</p>', implode( ' | ', $metas ) );
+		}
+
 		$parallax_image_background = $this->get_parallax_image_background();
 
 		// some themes do not include these styles/scripts so we need to enqueue them in this module
@@ -344,56 +399,127 @@ class ET_Builder_Module_Audio extends ET_Builder_Module {
 
 		$video_background = $this->video_background();
 
-		// Images: Add CSS Filters and Mix Blend Mode rules (if set)
-		if ( array_key_exists( 'image', $this->advanced_options ) && array_key_exists( 'css', $this->advanced_options['image'] ) ) {
-			$module_class .= $this->generate_css_filters(
-				$function_name,
-				'child_',
-				self::$data_utils->array_get( $this->advanced_options['image']['css'], 'main', '%%order_class%%' )
-			);
+		// Module classnames
+		$this->add_classname( array(
+			'et_pb_audio_module',
+			'clearfix',
+			"et_pb_bg_layout_{$background_layout}",
+		) );
+
+		if ( 'light' === $background_layout ) {
+			$this->add_classname( 'et_pb_text_color_dark' );
 		}
 
-		$output = sprintf(
-			'<div%8$s class="et_pb_audio_module clearfix%4$s%7$s%9$s%10$s%12$s %14$s"%5$s>
-				%13$s
-				%11$s
-				%6$s
+		$background_layout_tablet = isset( $background_layout_values['tablet'] ) ? $background_layout_values['tablet'] : '';
+		if ( ! empty( $background_layout_tablet ) ) {
+			$this->add_classname( "et_pb_bg_layout_{$background_layout_tablet}_tablet" );
+			if ( 'light' === $background_layout_tablet ) {
+				$this->add_classname( 'et_pb_text_color_dark_tablet' );
+			}
+		}
 
+		$background_layout_phone = isset( $background_layout_values['phone'] ) ? $background_layout_values['phone'] : '';
+		if ( ! empty( $background_layout_phone ) ) {
+			$this->add_classname( "et_pb_bg_layout_{$background_layout_phone}_phone" );
+			if ( 'light' === $background_layout_phone ) {
+				$this->add_classname( 'et_pb_text_color_dark_phone' );
+			}
+		}
+
+		if ( '' === $image_url ) {
+			$this->add_classname( 'et_pb_audio_no_image' );
+		}
+
+		// Remove automatically added module (backward compat)
+		$this->remove_classname( $render_slug );
+
+		// Images: Add CSS Filters and Mix Blend Mode rules (if set)
+		if ( array_key_exists( 'image', $this->advanced_fields ) && array_key_exists( 'css', $this->advanced_fields['image'] ) ) {
+			$this->add_classname( $this->generate_css_filters(
+				$render_slug,
+				'child_',
+				self::$data_utils->array_get( $this->advanced_fields['image']['css'], 'main', '%%order_class%%' )
+			) );
+		}
+
+		// WP 4.8 or lower compatibility
+		if ( version_compare( $wp_version, '4.9' ) === -1 ) {
+			$this->add_classname( 'et_pb_audio_legacy' );
+		}
+
+		$muti_view_data_attr = $multi_view->render_attrs( array(
+			'classes' => array(
+				'et_pb_audio_no_image' => array(
+					'image_url' => '__empty',
+				),
+			)
+		) );
+
+		$output = sprintf(
+			'<div%6$s class="%4$s"%9$s%10$s%11$s>
+				%8$s
+				%7$s
+				%5$s
 				<div class="et_pb_audio_module_content et_audio_container">
 					%1$s
 					%2$s
 					%3$s
 				</div>
 			</div>',
-			( '' !== $title ? sprintf( '<%1$s class="et_pb_module_header">%2$s</%1$s>', et_pb_process_header_level( $header_level, 'h2' ), esc_html( $title ) ) : '' ),
-			$meta,
+			$title, // #1
+			et_core_esc_previously( $meta ), // #2
 			self::get_audio( array(
 				'audio' => $audio,
-			) ),
-			esc_attr( $class ),
-			sprintf( ' style="background-color: %1$s;"', esc_attr( $background_color ) ),
-			$cover_art,
-			( '' === $image_url ? ' et_pb_audio_no_image' : '' ),
-			( '' !== $module_id ? sprintf( ' id="%1$s"', esc_attr( $module_id ) ) : '' ),
-			( '' !== $module_class ? sprintf( ' %1$s', esc_attr( $module_class ) ) : '' ),
-			'' !== $video_background ? ' et_pb_section_video et_pb_preload' : '',
-			$video_background,
-			'' !== $parallax_image_background ? ' et_pb_section_parallax' : '',
-			$parallax_image_background,
-			$wp_48_or_lower
+			) ), // #3
+			$this->module_classname( $render_slug ), // #4
+			et_core_esc_previously( $image_url ), // #5
+			$this->module_id(), // #6
+			$video_background, // #7
+			$parallax_image_background, // #8
+			et_core_esc_previously( $data_background_layout ), // #9
+			et_core_esc_previously( $data_background_layout_hover ), // #10
+			et_core_esc_previously( $muti_view_data_attr )
 		);
 
 		return $output;
 	}
 
-	public function process_box_shadow( $function_name ) {
-		/**
-		 * @var ET_Builder_Module_Field_BoxShadow $boxShadow
-		 */
-		$boxShadow = ET_Builder_Module_Fields_Factory::get( 'BoxShadow' );
-		$selector = '.' . self::get_module_order_class( $function_name );
+	/**
+	 * Filter multi view value.
+	 *
+	 * @since 3.27.1
+	 * 
+	 * @see ET_Builder_Module_Helper_MultiViewOptions::filter_value
+	 *
+	 * @param mixed $raw_value Props raw value.
+	 * @param array $args {
+	 *     Context data.
+	 *
+	 *     @type string $context      Context param: content, attrs, visibility, classes.
+	 *     @type string $name         Module options props name.
+	 *     @type string $mode         Current data mode: desktop, hover, tablet, phone.
+	 *     @type string $attr_key     Attribute key for attrs context data. Example: src, class, etc.
+	 *     @type string $attr_sub_key Attribute sub key that availabe when passing attrs value as array such as styes. Example: padding-top, margin-botton, etc.
+	 * }
+	 * @param ET_Builder_Module_Helper_MultiViewOptions $multi_view Multiview object instance.
+	 *
+	 * @return mixed
+	 */
+	public function multi_view_filter_value( $raw_value, $args, $multi_view ) {
+		$name = isset( $args['name'] ) ? $args['name'] : '';
+		$mode = isset( $args['mode'] ) ? $args['mode'] : '';
 
-		self::set_style( $function_name, $boxShadow->get_style( $selector, $this->shortcode_atts ) );
+		$fields_need_escape = array(
+			'title',
+			'artist_name',
+			'album_name',
+		);
+
+		if ( $raw_value && in_array( $name, $fields_need_escape, true ) ) {
+			return $this->_esc_attr( $multi_view->get_name_by_mode( $name, $mode ) );
+		}
+
+		return $raw_value;
 	}
 }
 

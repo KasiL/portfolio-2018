@@ -79,15 +79,18 @@ class ITSEC_Scheduler_Page_Load extends ITSEC_Scheduler {
 
 	public function is_single_scheduled( $id, $data = array() ) {
 
-		$hash    = $this->hash_data( $data );
 		$options = $this->get_options();
 
 		if ( empty( $options['single'][ $id ] ) ) {
 			return false;
 		}
 
-		if ( empty( $options['single'][ $id ][ $hash ] ) ) {
-			return false;
+		if ( null !== $data ) {
+			$hash = $this->hash_data( $data );
+
+			if ( empty( $options['single'][ $id ][ $hash ] ) ) {
+				return false;
+			}
 		}
 
 		return true;
@@ -109,15 +112,24 @@ class ITSEC_Scheduler_Page_Load extends ITSEC_Scheduler {
 	public function unschedule_single( $id, $data = array() ) {
 
 		$options = $this->operating_data ? $this->operating_data : $this->get_options();
-		$hash    = $this->hash_data( $data );
 
-		if ( isset( $options['single'][ $id ][ $hash ] ) ) {
-			unset( $options['single'][ $id ][ $hash ] );
-
-			return $this->set_options( $options );
+		if ( ! isset( $options['single'][ $id ] ) ) {
+			return false;
 		}
 
-		return false;
+		if ( null === $data ) {
+			unset( $options['single'][ $id ] );
+		} else {
+			$hash = $this->hash_data( $data );
+
+			if ( ! isset( $options['single'][ $id ][ $hash ] ) ) {
+				return false;
+			}
+
+			unset( $options['single'][ $id ][ $hash ] );
+		}
+
+		return $this->set_options( $options );
 	}
 
 	public function get_recurring_events() {
@@ -147,6 +159,7 @@ class ITSEC_Scheduler_Page_Load extends ITSEC_Scheduler {
 					'id'      => $id,
 					'data'    => $event['data'],
 					'fire_at' => $event['fire_at'],
+					'hash'    => $hash,
 				);
 			}
 		}
@@ -164,7 +177,15 @@ class ITSEC_Scheduler_Page_Load extends ITSEC_Scheduler {
 			return;
 		}
 
-		$now     = ITSEC_Core::get_current_time_gmt();
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			return;
+		}
+
+		$this->run_due_now();
+	}
+
+	public function run_due_now( $now = 0 ) {
+		$now     = $now ? $now : ITSEC_Core::get_current_time_gmt();
 		$options = $this->get_options();
 
 		$to_process = array();
@@ -245,6 +266,13 @@ class ITSEC_Scheduler_Page_Load extends ITSEC_Scheduler {
 	}
 
 	public function run_single_event( $id, $data = array() ) {
+		$this->run_single_event_by_hash( $id, $this->hash_data( $data ) );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function run_single_event_by_hash( $id, $hash ) {
 
 		if ( $this->operating_data ) {
 			$clear_operating_data = false;
@@ -254,14 +282,20 @@ class ITSEC_Scheduler_Page_Load extends ITSEC_Scheduler {
 			$storage              = $this->operating_data = $this->get_options();
 		}
 
-		$hash  = $this->hash_data( $data );
+		if ( ! isset( $storage['single'][ $id ][ $hash ] ) ) {
+			if ( $clear_operating_data ) {
+				$this->operating_data = null;
+			}
+
+			return;
+		}
+
 		$event = $storage['single'][ $id ][ $hash ];
 
 		$job = $this->make_job( $id, $event['data'], array( 'single' => true ) );
 
+		$this->unschedule_single( $id, $event['data'] );
 		$this->call_action( $job );
-
-		$this->unschedule_single( $id, $data );
 
 		if ( $clear_operating_data ) {
 			$this->operating_data = null;
